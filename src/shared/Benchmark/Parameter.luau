@@ -217,7 +217,7 @@ Parameter.Array = {
 	end,
 	generate = function(param: ArrayParameter, rng: Random): { any }
 		local minLength = math.max(param.MinLength or 1, 1)
-		local maxLength = math.max(minLength + 1, param.MaxLength or CONSTANTS.DEFAULT_TABLE_SIZE)
+		local maxLength = math.max(minLength, param.MaxLength or CONSTANTS.DEFAULT_TABLE_SIZE)
 		local length = rng:NextInteger(minLength, maxLength)
 		local result = {}
 		for i = 1, length do
@@ -248,7 +248,7 @@ Parameter.String = {
 	end,
 	generate = function(param: StringParameter, rng: Random): string
 		local minLength = math.max(param.MinLength or 1, 1)
-		local maxLength = math.max(minLength + 1, param.MaxLength or CONSTANTS.DEFAULT_STRING_LENGTH)
+		local maxLength = math.max(minLength, param.MaxLength or CONSTANTS.DEFAULT_STRING_LENGTH)
 		local length = rng:NextInteger(minLength, maxLength)
 		local chars = {}
 		for i = 1, length do
@@ -286,7 +286,7 @@ Parameter.Map = {
 	end,
 	generate = function(param: MapParameter, rng: Random): { [any]: any }
 		local minLength = math.max(param.MinLength or 1, 1)
-		local maxLength = math.max(minLength + 1, param.MaxLength or CONSTANTS.DEFAULT_TABLE_SIZE)
+		local maxLength = math.max(minLength, param.MaxLength or CONSTANTS.DEFAULT_TABLE_SIZE)
 		local length = rng:NextInteger(minLength, maxLength)
 		local result = {}
 		for i = 1, length do
