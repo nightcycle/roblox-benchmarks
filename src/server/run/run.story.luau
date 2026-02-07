@@ -10,7 +10,7 @@ local Logger = require(game.ReplicatedStorage.Shared.Logger)
 local IS_FLAT = true
 -- Variables
 -- References
-local Benchmarks = game.ServerScriptService.Server.benchmarks.types.vector3
+local Benchmarks = game.ServerScriptService.Server.benchmarks
 -- Private Functions
 -- Class
 return function()
@@ -29,6 +29,7 @@ return function()
 	local thr = task.spawn(function()
 		SaveUtil.newSession()
 		for i, runner in runners do
+			Logger.log(`\nrunning benchmark {i}/{#runners}`)
 			if not isAlive then
 				break
 			end

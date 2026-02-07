@@ -87,7 +87,7 @@ function Runner.new(target: ModuleScript): Runner
 			return benchmarkModule
 		end,
 		solve = function(self: Runner, rng: Random): Summary
-			Logger.log(`solving {target:GetFullName()}`)
+			Logger.log(`\t - solve - starting {target:GetFullName()}`)
 
 			local testStart = os.clock()
 			local benchmark = self:load()
