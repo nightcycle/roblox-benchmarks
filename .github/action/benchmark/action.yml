@@ -1,0 +1,17 @@
+name: benchmark
+description: GitHub action to run benchmark using the luau execution api
+author: nightcycle
+
+inputs:
+  universe-id:
+    description: The ID of the Roblox universe to run the benchmark in.
+    default: "9690745121"
+  place-id:
+    description: The ID of the place to run the benchmark in.
+    default: "111123068113322"
+  api-key:
+    description: The API key to authenticate with the Roblox API.
+    required: true
+  benchmark:
+    description: the benchmarks you wish to run
+    default: "src/server/benchmarks"

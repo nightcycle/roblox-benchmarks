@@ -1,4 +1,4 @@
 [tools]
 rojo = "rojo-rbx/rojo@7.6.1"
-lune = "lune-org/lune@0.10.2"
 file-util = "nightcycle/file-util@0.1.2"
+rbxcloud = "sleitnick/rbxcloud@0.17.0"

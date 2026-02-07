@@ -103,4 +103,7 @@
 	"[luau]": {
 		"editor.defaultFormatter": "JohnnyMorganz.stylua"
 	},
+	"secrets.enabledFolders": [
+		"roblox-benchmark"
+	],
 }
