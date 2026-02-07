@@ -14,7 +14,7 @@ return Benchmark.new(
 		Benchmark.Parameter.Float.new("value"),
 	},
 	function(value: number)
-		return math.floor(value)
+		return value - value % 1
 	end :: any,
 	100_000,
 	1_000

@@ -11,10 +11,11 @@ local Benchmark = require(game.ReplicatedStorage.Shared.Benchmark)
 -- Class
 return Benchmark.new(
 	{
-		Benchmark.Parameter.Float.new("value"),
+		Benchmark.Parameter.Integer.new("a"),
+		Benchmark.Parameter.Integer.new("b"),
 	},
-	function(value: number)
-		return math.floor(value)
+	function(a: number, b: number)
+		return a + b
 	end :: any,
 	100_000,
 	1_000

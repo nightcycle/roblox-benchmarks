@@ -4,6 +4,7 @@
 -- Modules
 local Benchmark = require(game.ReplicatedStorage.Shared.Benchmark)
 local SaveUtil = require(game.ReplicatedStorage.Shared.SaveUtil)
+local Logger = require(game.ReplicatedStorage.Shared.Logger)
 -- Types
 type Benchmark = Benchmark.Benchmark
 type Sample = {
@@ -32,6 +33,7 @@ export type Runner = {
 	save: (self: Runner, summary: Summary, isFlat: boolean) -> (),
 }
 -- Constants
+local CONSTANTS = require(game.ReplicatedStorage.Shared.CONSTANTS)
 local SUMMARY_PATH = "summary.csv"
 local SUMMARY_CSV_HEADER =
 	"bench.path,bench.start,bench.stop,bench.samples,bench.repeats,stats.min,stats.max,stats.mean,stats.stddev,stats.p10,stats.p50,stats.p90"
@@ -39,12 +41,17 @@ local SUMMARY_CSV_HEADER =
 -- References
 -- Private Functions
 function toBasePath(fullName: string, separator: string): string
-	local basePath = fullName:gsub("%.", "/")
+	local basePath = fullName:gsub("%.", separator)
 	local foundBenchmark = false
 	local parts = {}
 	local serviceName: string?
-	for i, segment in basePath:split(separator) do
-		if i == 2 then
+	for i, segment in
+		if separator == "/"
+			then basePath:split("/")
+			elseif separator == "." then basePath:split("%.")
+			else basePath:split(separator)
+	do
+		if i == 1 then
 			serviceName = segment
 		end
 		if segment == "benchmarks" then
@@ -71,6 +78,7 @@ end
 local Runner = {}
 
 function Runner.new(target: ModuleScript): Runner
+	Logger.log(`constructed runner for {target:GetFullName()}`)
 	return {
 		Target = target,
 		load = function(self: Runner): Benchmark
@@ -78,6 +86,8 @@ function Runner.new(target: ModuleScript): Runner
 			return benchmarkModule
 		end,
 		solve = function(self: Runner, rng: Random): Summary
+			Logger.log(`solve - running {target:GetFullName()}`)
+
 			local testStart = os.clock()
 			local benchmark = self:load()
 			local data: { Sample } = {}
@@ -105,8 +115,8 @@ function Runner.new(target: ModuleScript): Runner
 				local stopTime = os.clock()
 				local elapsed = stopTime - startTime - minElapsed
 				assert(
-					elapsed <= 0,
-					`target "{self.Target:GetFullName()}" ran in 0 or less time, increase the number of repeats for such a low-level benchmark`
+					elapsed > 0,
+					`target "{self.Target:GetFullName()}" ran in 0 or less time ({elapsed} s), increase the number of repeats for such a low-level benchmark`
 				)
 				local normalized = math.ceil((elapsed / benchmark.Repeats) * 1_000_000_000_000) -- pico seconds
 				return {
@@ -117,9 +127,14 @@ function Runner.new(target: ModuleScript): Runner
 
 			local count = benchmark.Samples
 			for sample = 1, count do
+				if sample % CONSTANTS.PAUSE_EVERY_N_SAMPLES == 0 then
+					task.wait()
+				end
 				local params = sampleParameters[sample]
 				data[sample] = run(table.unpack(params :: any, 1, #benchmark.Parameters))
 			end
+			Logger.log(`solve - summarizing {target:GetFullName()}`)
+
 			do
 				local min = math.huge
 				local max = -math.huge
@@ -168,6 +183,7 @@ function Runner.new(target: ModuleScript): Runner
 					p90 = percentile(0.9)
 				end
 				local testStop = os.clock()
+				Logger.log(`solve - finished {target:GetFullName()} in {testStop - testStart}s`)
 				return {
 					Benchmark = benchmark,
 					Data = data,

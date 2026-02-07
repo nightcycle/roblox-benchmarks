@@ -1,2 +1,4 @@
 *.rbxl
+*.rbxl.lock
 sourcemap.json
+data

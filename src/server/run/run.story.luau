@@ -3,6 +3,7 @@
 -- Packages
 -- Modules
 local Runner = require(game.ReplicatedStorage.Shared.Runner)
+local SaveUtil = require(game.ReplicatedStorage.Shared.SaveUtil)
 -- Types
 -- Constants
 local IS_FLAT = true
@@ -18,13 +19,13 @@ return function()
 			table.insert(modules, v)
 		end
 	end
-	table.sort(modules)
 	local runners: { Runner.Runner } = {}
 	for i, runModule in modules do
 		table.insert(runners, Runner.new(runModule))
 	end
 	local isAlive = true
 	local thr = task.spawn(function()
+		SaveUtil.newSession()
 		for i, runner in runners do
 			if not isAlive then
 				break

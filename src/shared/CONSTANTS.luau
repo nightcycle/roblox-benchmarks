@@ -4,6 +4,7 @@ local CONSTANTS = {
 	DEFAULT_TABLE_SIZE = 100_000,
 	DEFAULT_SAMPLES = 10_000, -- how many times the benchmark is run
 	DEFAULT_REPEATS = 100, -- how many times to re-run with the same parameters
+	PAUSE_EVERY_N_SAMPLES = 10, -- how many iterations to run before yielding to a new thread
 }
 table.freeze(CONSTANTS)
 return CONSTANTS

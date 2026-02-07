@@ -12,3 +12,5 @@ echo "Using sourcemap path: $SOURCEMAP"
 rojo build "$PROJECT" -o "$BUILD_PATH"
 rojo sourcemap "$PROJECT" --output "$SOURCEMAP"
 echo "Build complete."
+
+# remove data directory

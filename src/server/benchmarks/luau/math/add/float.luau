@@ -11,11 +11,12 @@ local Benchmark = require(game.ReplicatedStorage.Shared.Benchmark)
 -- Class
 return Benchmark.new(
 	{
-		Benchmark.Parameter.Float.new("value"),
+		Benchmark.Parameter.Float.new("a"),
+		Benchmark.Parameter.Float.new("b"),
 	},
-	function(value: number)
-		return value - value % 1
+	function(a: number, b: number)
+		return a + b
 	end :: any,
-	10_000,
-	100
+	100_000,
+	1_000
 )
