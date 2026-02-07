@@ -36,7 +36,7 @@ export type Runner = {
 local CONSTANTS = require(game.ReplicatedStorage.Shared.CONSTANTS)
 local SUMMARY_PATH = "summary.csv"
 local SUMMARY_CSV_HEADER =
-	"bench.path,bench.start,bench.stop,bench.samples,bench.repeats,stats.min,stats.max,stats.mean,stats.stddev,stats.p10,stats.p50,stats.p90"
+	"bench.path,bench.duration,bench.samples,bench.repeats,stats.min,stats.max,stats.mean,stats.stddev,stats.p10,stats.p50,stats.p90"
 -- Variables
 -- References
 -- Private Functions
@@ -202,8 +202,7 @@ function Runner.new(target: ModuleScript): Runner
 						local moduleKey = toBasePath(target:GetFullName(), "/")
 						return table.concat({
 							moduleKey,
-							testStart,
-							testStop,
+							testStop - testStart,
 							benchmark.Samples,
 							benchmark.Repeats,
 							min,

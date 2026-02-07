@@ -35,6 +35,7 @@ return function()
 			local summary = runner:solve(Random.new())
 			runner:save(summary, IS_FLAT)
 		end
+		Logger.log("benchmark run complete!\n")
 	end)
 
 	return function()
