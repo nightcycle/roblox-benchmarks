@@ -87,7 +87,7 @@ function Runner.new(target: ModuleScript): Runner
 			return benchmarkModule
 		end,
 		solve = function(self: Runner, rng: Random): Summary
-			Logger.log(`solve - running {target:GetFullName()}`)
+			Logger.log(`solving {target:GetFullName()}`)
 
 			local testStart = os.clock()
 			local benchmark = self:load()
@@ -134,7 +134,7 @@ function Runner.new(target: ModuleScript): Runner
 				local params = sampleParameters[sample]
 				data[sample] = run(table.unpack(params :: any, 1, #benchmark.Parameters))
 			end
-			Logger.log(`solve - summarizing {target:GetFullName()}`)
+			Logger.log(`\tsolve - summarizing {target:GetFullName()}`)
 
 			do
 				local min = math.huge
@@ -184,7 +184,7 @@ function Runner.new(target: ModuleScript): Runner
 					p90 = percentile(0.9)
 				end
 				local testStop = os.clock()
-				Logger.log(`solve - finished {target:GetFullName()} in {testStop - testStart}s`)
+				Logger.log(`\tsolve - finished {target:GetFullName()} in {testStop - testStart}s`)
 				return {
 					Benchmark = benchmark,
 					Data = data,
@@ -217,7 +217,7 @@ function Runner.new(target: ModuleScript): Runner
 					end,
 					exportToCSV = function(self: Summary): string
 						local rows = {}
-						local headers = { "elapsed_ps", "repeats" }
+						local headers = { "elapsed.ps", "repeats.n" }
 						for i, param in self.Benchmark.Parameters do
 							table.insert(headers, ("param." .. param.Key .. "." .. param.Type):lower())
 						end
