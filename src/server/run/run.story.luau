@@ -10,7 +10,7 @@ local Logger = require(game.ReplicatedStorage.Shared.Logger)
 local IS_FLAT = true
 -- Variables
 -- References
-local Benchmarks = game.ServerScriptService.Server.benchmarks.types.rect
+local Benchmarks = game.ServerScriptService.Server.benchmarks.types.vector3
 -- Private Functions
 -- Class
 return function()
