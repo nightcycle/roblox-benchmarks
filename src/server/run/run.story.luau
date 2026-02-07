@@ -10,7 +10,7 @@ local Logger = require(game.ReplicatedStorage.Shared.Logger)
 local IS_FLAT = true
 -- Variables
 -- References
-local Benchmarks = game.ServerScriptService.Server.benchmarks.luau.var.read
+local Benchmarks = game.ServerScriptService.Server.benchmarks.luau.math.operations
 -- Private Functions
 -- Class
 return function()
