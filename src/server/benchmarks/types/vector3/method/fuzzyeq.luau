@@ -14,7 +14,7 @@ return Benchmark.new(
 	{
 		Benchmark.Parameter.Vector3.new("a"),
 		Benchmark.Parameter.Vector3.new("b"),
-		Benchmark.Parameter.Nullable.new("epsilon", Benchmark.Parameter.Float.new("value", 0.00001, 0.01)),
+		Benchmark.Parameter.Float.new("value", 0.00001, 0.01),
 	},
 	function(a: Vector3, b: Vector3, epsilon: number?)
 		return a:FuzzyEq(b, epsilon)
