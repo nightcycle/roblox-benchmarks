@@ -14,7 +14,7 @@ return Benchmark.new(
 		Benchmark.Parameter.Integer.new("value"),
 	},
 	function(a: number)
-		return tostring(a)
+		return string.format("%d", a)
 	end :: any,
 	100_000,
 	1_000

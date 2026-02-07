@@ -26,6 +26,33 @@ export type Parameter =
 	| HexStringParameter
 	| Color3Parameter
 	| BrickColorParameter
+	| CustomParameter
+
+type CustomParameter = {
+	read Key: string,
+	read Type: "Custom",
+	read Method: (Random) -> any?,
+	read ToString: ((CustomParameter) -> string)?,
+}
+Parameter.Custom = {
+	new = function(key: string, method: (Random) -> any?, toString: ((CustomParameter) -> string)?): CustomParameter
+		return {
+			Key = key,
+			Type = "Custom",
+			Method = method,
+			ToString = toString,
+		}
+	end,
+	generate = function(param: CustomParameter, rng: Random): any?
+		return param.Method(rng)
+	end :: (any, Random) -> any?,
+	tostring = function(param: CustomParameter): string
+		if param.ToString then
+			return param.ToString(param)
+		end
+		return string.format("Custom<%s>", param.Key)
+	end,
+}
 
 type IntegerParameter = {
 	read Key: string,
