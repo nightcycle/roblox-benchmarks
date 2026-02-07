@@ -270,8 +270,8 @@ type MapParameter = {
 Parameter.Map = {
 	new = function(
 		key: string,
-		valueType: Parameter,
 		keyType: Parameter,
+		valueType: Parameter,
 		minLength: number?,
 		maxLength: number?
 	): MapParameter
@@ -292,12 +292,16 @@ Parameter.Map = {
 		for i = 1, length do
 			local key: any?
 			local attemptCount = 0
+			local maximumAttempts = math.max(10_000, length ^ 2)
 			repeat
 				attemptCount += 1
 				key = Parameter.Any.generate(param.KeyType, rng)
-			until key ~= nil and result[key] == nil and attemptCount > length
+			until key ~= nil and result[key] == nil and attemptCount < maximumAttempts
 			assert(key ~= nil, "Failed to generate unique key for MapParameter")
-			assert(attemptCount <= length, "Exceeded maximum attempts to generate unique key for MapParameter")
+			assert(
+				attemptCount <= maximumAttempts,
+				`Exceeded maximum attempts to generate unique key for MapParameter: {attemptCount}/{maximumAttempts} for map of length {length} ({i})`
+			)
 			local value = Parameter.Any.generate(param.ValueType, rng)
 			result[key] = value
 		end

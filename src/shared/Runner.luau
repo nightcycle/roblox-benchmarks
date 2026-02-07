@@ -233,7 +233,11 @@ function Runner.new(target: ModuleScript): Runner
 								if param.Type == "Array" then
 									paramValue = `array<{param.ValueType.Type:lower()}>[{#(paramValue :: { any })}]`
 								elseif param.Type == "Map" then
-									paramValue = `map<{param.KeyType.Type:lower()},{param.ValueType.Type:lower()}>[]`
+									paramValue =
+										`map<{param.KeyType.Type:lower()},{param.ValueType.Type:lower()}>[{if param.MaxLength
+												and param.MaxLength == param.MinLength
+											then param.MaxLength
+											else ""}]`
 								end
 								local str = tostring(paramValue):gsub(",", ";") -- escape commas
 								table.insert(row, str)
