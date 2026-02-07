@@ -13,7 +13,7 @@ local VALUE_PARAM = Benchmark.Parameter.Integer.new("value")
 -- Class
 return Benchmark.new(
 	{
-		Benchmark.Parameter.Array.new("array", VALUE_PARAM, true, SIZE, SIZE),
+		Benchmark.Parameter.Array.new("array", VALUE_PARAM, false, SIZE, SIZE),
 		Benchmark.Parameter.Integer.new("index", 1, SIZE),
 		VALUE_PARAM,
 	},

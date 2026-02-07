@@ -12,7 +12,7 @@ local CONSTANTS = require(game.ReplicatedStorage.Shared.CONSTANTS)
 local Parameter = {}
 
 export type Parameter =
-	| IntegerParemeter
+	| IntegerParameter
 	| BooleanParameter
 	| FloatParameter
 	| LiteralParameter
@@ -22,8 +22,9 @@ export type Parameter =
 	| MapParameter
 	| NullableParameter
 	| StaticParameter
+	| StringParameter
 
-type IntegerParemeter = {
+type IntegerParameter = {
 	read Key: string,
 	read Type: "Integer",
 	read Min: number?,
@@ -31,7 +32,7 @@ type IntegerParemeter = {
 	read Increment: number?,
 }
 Parameter.Integer = {
-	new = function(key: string, min: number?, max: number?, increment: number?): IntegerParemeter
+	new = function(key: string, min: number?, max: number?, increment: number?): IntegerParameter
 		return {
 			Key = key,
 			Type = "Integer",
@@ -40,7 +41,7 @@ Parameter.Integer = {
 			Increment = increment,
 		}
 	end,
-	generate = function(param: IntegerParemeter, rng: Random): number
+	generate = function(param: IntegerParameter, rng: Random): number
 		local min = param.Min or -CONSTANTS.BIGGEST_INTEGER
 		local max = param.Max or CONSTANTS.BIGGEST_INTEGER
 		local value = rng:NextInteger(min, max)
@@ -52,6 +53,7 @@ Parameter.Integer = {
 		return value
 	end :: (any, Random) -> number,
 }
+
 type FloatParameter = {
 	read Key: string,
 	read Type: "Float",
@@ -229,6 +231,34 @@ Parameter.Array = {
 	end :: (any, Random) -> { any },
 }
 
+type StringParameter = {
+	read Key: string,
+	read Type: "String",
+	read MinLength: number?,
+	read MaxLength: number?,
+}
+Parameter.String = {
+	new = function(key: string, minLength: number?, maxLength: number?): StringParameter
+		return {
+			Key = key,
+			Type = "String",
+			MinLength = minLength,
+			MaxLength = maxLength,
+		}
+	end,
+	generate = function(param: StringParameter, rng: Random): string
+		local minLength = math.max(param.MinLength or 1, 1)
+		local maxLength = math.max(minLength + 1, param.MaxLength or CONSTANTS.DEFAULT_STRING_LENGTH)
+		local length = rng:NextInteger(minLength, maxLength)
+		local chars = {}
+		for i = 1, length do
+			local charCode = rng:NextInteger(32, 126) -- Printable ASCII range
+			chars[i] = string.char(charCode)
+		end
+		return table.concat(chars)
+	end :: (any, Random) -> string,
+}
+
 type MapParameter = {
 	read Key: string,
 	read Type: "Map",
@@ -274,6 +304,7 @@ Parameter.Map = {
 		return result
 	end :: (any, Random) -> { [any]: any },
 }
+
 type NullableParameter = {
 	read Key: string,
 	read Type: "Nullable",
