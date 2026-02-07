@@ -56,6 +56,7 @@ function toBasePath(fullName: string, separator: string): string
 		end
 		if segment == "benchmarks" then
 			foundBenchmark = true
+			continue
 		end
 		if foundBenchmark then
 			table.insert(parts, segment)
@@ -198,8 +199,9 @@ function Runner.new(target: ModuleScript): Runner
 					},
 					toCSVRow = function(self: Summary): string
 						-- "bench.path,bench.start,bench.stop,bench.samples,bench.repeats,stats.min,stats.max,stats.mean,stats.stddev,stats.p10,stats.p50,stats.p90"
+						local moduleKey = toBasePath(target:GetFullName(), "/")
 						return table.concat({
-							toBasePath(target:GetFullName(), "/"),
+							moduleKey,
 							testStart,
 							testStop,
 							benchmark.Samples,

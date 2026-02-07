@@ -13,6 +13,10 @@ local Util = {}
 
 Util.log = function(str: string)
 	if ENV.IS_VERBOSE then
+		-- if str starts with "\n" then print a blank line first
+		if str:sub(1, 1) == "\n" then
+			print()
+		end
 		-- local t = DateTime.now():ToIsoDate()
 		local src, _currentLine = debug.info(2, "sl")
 		-- get text in quotes for src
@@ -22,6 +26,10 @@ Util.log = function(str: string)
 end
 Util.wlog = function(str: string)
 	if ENV.IS_VERBOSE then
+		-- if str starts with "\n" then print a blank line first
+		if str:sub(1, 1) == "\n" then
+			print()
+		end
 		-- local t = DateTime.now():ToIsoDate()
 		local src, _currentLine = debug.info(2, "sl")
 		-- get text in quotes for src

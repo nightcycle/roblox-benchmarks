@@ -4,6 +4,7 @@
 -- Modules
 local Runner = require(game.ReplicatedStorage.Shared.Runner)
 local SaveUtil = require(game.ReplicatedStorage.Shared.SaveUtil)
+local Logger = require(game.ReplicatedStorage.Shared.Logger)
 -- Types
 -- Constants
 local IS_FLAT = true
@@ -13,6 +14,7 @@ local Benchmarks = game.ServerScriptService.Server.benchmarks
 -- Private Functions
 -- Class
 return function()
+	Logger.log("\nstarting benchmark run...")
 	local modules: { ModuleScript } = {}
 	for i, v in Benchmarks:GetDescendants() do
 		if v:IsA("ModuleScript") then
