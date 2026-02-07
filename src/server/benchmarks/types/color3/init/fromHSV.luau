@@ -11,12 +11,12 @@ local Benchmark = require(game.ReplicatedStorage.Shared.Benchmark)
 -- Class
 return Benchmark.new(
 	{
-		Benchmark.Parameter.Float.new("v"),
-		Benchmark.Parameter.Float.new("min", nil, -1),
-		Benchmark.Parameter.Float.new("max", 1, nil),
+		Benchmark.Parameter.Integer.new("h", 0, 255),
+		Benchmark.Parameter.Integer.new("s", 0, 255),
+		Benchmark.Parameter.Integer.new("v", 0, 255),
 	},
-	function(v: number, min: number, max: number)
-		return math.min(math.max(v, min), max)
+	function(h: number, s: number, v: number)
+		return Color3.fromHSV(h, s, v)
 	end :: any,
 	100_000,
 	1_000

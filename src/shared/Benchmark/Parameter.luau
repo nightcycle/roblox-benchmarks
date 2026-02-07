@@ -23,6 +23,9 @@ export type Parameter =
 	| NullableParameter
 	| StaticParameter
 	| StringParameter
+	| HexStringParameter
+	| Color3Parameter
+	| BrickColorParameter
 
 type IntegerParameter = {
 	read Key: string,
@@ -256,6 +259,51 @@ Parameter.String = {
 			chars[i] = string.char(charCode)
 		end
 		return table.concat(chars)
+	end :: (any, Random) -> string,
+}
+type Color3Parameter = {
+	read Key: string,
+	read Type: "Color3",
+}
+Parameter.Color3 = {
+	new = function(key: string): Color3Parameter
+		return {
+			Key = key,
+			Type = "Color3",
+		}
+	end,
+	generate = function(param: Color3Parameter, rng: Random): Color3
+		return Color3.fromRGB(rng:NextInteger(0, 255), rng:NextInteger(0, 255), rng:NextInteger(0, 255))
+	end :: (any, Random) -> string,
+}
+type BrickColorParameter = {
+	read Key: string,
+	read Type: "BrickColor",
+}
+Parameter.BrickColor = {
+	new = function(key: string): BrickColorParameter
+		return {
+			Key = key,
+			Type = "BrickColor",
+		}
+	end,
+	generate = function(param: BrickColorParameter, rng: Random): BrickColor
+		return BrickColor.new(rng:NextNumber(), rng:NextNumber(), rng:NextNumber())
+	end :: (any, Random) -> string,
+}
+type HexStringParameter = {
+	read Key: string,
+	read Type: "HexString",
+}
+Parameter.HexString = {
+	new = function(key: string): HexStringParameter
+		return {
+			Key = key,
+			Type = "HexString",
+		}
+	end,
+	generate = function(param: HexStringParameter, rng: Random): string
+		return Color3.fromRGB(rng:NextInteger(0, 255), rng:NextInteger(0, 255), rng:NextInteger(0, 255)):ToHex()
 	end :: (any, Random) -> string,
 }
 
