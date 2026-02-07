@@ -219,7 +219,7 @@ function Runner.new(target: ModuleScript): Runner
 						local rows = {}
 						local headers = { "elapsed_ps", "repeats" }
 						for i, param in self.Benchmark.Parameters do
-							table.insert(headers, ("param" .. param.Key .. "." .. param.Type):lower())
+							table.insert(headers, ("param." .. param.Key .. "." .. param.Type):lower())
 						end
 						table.insert(rows, table.concat(headers, ","))
 						for j = 1, self.Benchmark.Samples do
@@ -230,7 +230,8 @@ function Runner.new(target: ModuleScript): Runner
 							}
 							for i, param in self.Benchmark.Parameters do
 								local paramValue = data.Inputs[i]
-								table.insert(row, tostring(paramValue))
+								local str = tostring(paramValue):gsub(",", ";") -- escape commas
+								table.insert(row, str)
 							end
 							table.insert(rows, table.concat(row, ","))
 						end
@@ -248,7 +249,7 @@ function Runner.new(target: ModuleScript): Runner
 				SaveUtil.appendCSV(SUMMARY_PATH, summary:toCSVRow(), SUMMARY_CSV_HEADER)
 			end
 			do
-				local detailedCSVPath = basePath .. "raw.csv"
+				local detailedCSVPath = basePath .. ".csv"
 				SaveUtil.saveCSV(detailedCSVPath, summary:exportToCSV())
 			end
 		end,

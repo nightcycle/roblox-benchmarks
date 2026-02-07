@@ -117,8 +117,8 @@ Parameter.Vector2 = {
 		}
 	end,
 	generate = function(param: Vector2Parameter, rng: Random): Vector2
-		local min = param.Min or Vector2.new(-CONSTANTS.BIGGEST_FLOAT, -CONSTANTS.BIGGEST_FLOAT)
-		local max = param.Max or Vector2.new(CONSTANTS.BIGGEST_FLOAT, CONSTANTS.BIGGEST_FLOAT)
+		local min = param.Min or Vector2.new(-CONSTANTS.BIGGEST_VEC_FLOAT, -CONSTANTS.BIGGEST_VEC_FLOAT)
+		local max = param.Max or Vector2.new(CONSTANTS.BIGGEST_VEC_FLOAT, CONSTANTS.BIGGEST_VEC_FLOAT)
 		local x = rng:NextNumber(min.X, max.X)
 		local y = rng:NextNumber(min.Y, max.Y)
 		local value = Vector2.new(x, y)
@@ -151,8 +151,9 @@ Parameter.Vector3 = {
 	end,
 	generate = function(param: Vector3Parameter, rng: Random): Vector3
 		local min = param.Min
-			or Vector3.new(-CONSTANTS.BIGGEST_FLOAT, -CONSTANTS.BIGGEST_FLOAT, -CONSTANTS.BIGGEST_FLOAT)
-		local max = param.Max or Vector3.new(CONSTANTS.BIGGEST_FLOAT, CONSTANTS.BIGGEST_FLOAT, CONSTANTS.BIGGEST_FLOAT)
+			or Vector3.new(-CONSTANTS.BIGGEST_VEC_FLOAT, -CONSTANTS.BIGGEST_VEC_FLOAT, -CONSTANTS.BIGGEST_VEC_FLOAT)
+		local max = param.Max
+			or Vector3.new(CONSTANTS.BIGGEST_VEC_FLOAT, CONSTANTS.BIGGEST_VEC_FLOAT, CONSTANTS.BIGGEST_VEC_FLOAT)
 		local x = rng:NextNumber(min.X, max.X)
 		local y = rng:NextNumber(min.Y, max.Y)
 		local z = rng:NextNumber(min.Z, max.Z)
