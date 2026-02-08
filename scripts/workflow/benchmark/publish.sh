@@ -6,7 +6,7 @@ PUBLISH_RESPONSE=$(rbxcloud experience publish \
 	--filename "$BUILD_PATH" \
 	--universe-id "$UNIVERSE_ID" \
 	--place-id "$PLACE_ID" \
-	--api-key "$API_KEY" \
+	--api-key "$RBX_API_KEY" \
 	--version-type "saved" \
 	--pretty
 )

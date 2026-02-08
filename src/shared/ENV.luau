@@ -10,6 +10,7 @@
 -- Class
 local DEFAULT_ENV = {
 	IS_VERBOSE = true,
+	FILTER_PATH = "",
 }
 setmetatable(DEFAULT_ENV, {
 	__index = function(s, k): any?

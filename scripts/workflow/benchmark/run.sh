@@ -12,6 +12,7 @@ echo "Using place id: $PLACE_ID"
 echo "Using place version: $PLACE_VERSION"
 echo "Using script path: $SCRIPT_PATH"
 SCRIPT_CONTENTS=$(cat "$SCRIPT_PATH")
+
 echo "Using script contents:"
 echo "------------------------"
 echo "$SCRIPT_CONTENTS"
@@ -22,7 +23,7 @@ EXECUTE_RESPONSE=$(rbxcloud luau execute \
 	-r "$PLACE_VERSION" \
 	-f "$SCRIPT_PATH" \
 	-t "${TIMEOUT}s" \
-	-a "$API_KEY" \
+	-a "$RBX_API_KEY" \
 	-p
 )
 echo "response: $EXECUTE_RESPONSE"
@@ -52,7 +53,7 @@ while [ "$TASK_STATE" = "PROCESSING" ] && [ $ATTEMPTS -lt $TIMEOUT ]; do
 		-r "$PLACE_VERSION" \
 		-s "$SESSION_ID" \
 		-t "$TASK_ID" \
-		-a "$API_KEY" \
+		-a "$RBX_API_KEY" \
 		-p
 	)
 	set -e
