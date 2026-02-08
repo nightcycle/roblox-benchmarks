@@ -2,6 +2,9 @@
 set -e
 echo "Running benchmark"
 
+DATA_RELEASE_VERSION="${1:?'arg 1, DATA_RELEASE_VERSION, is not set'}"
+echo "Using data release version: $DATA_RELEASE_VERSION"
+
 : "${BENCHMARK_PATH:=src/server/benchmarks}"
 export BENCHMARK_PATH
 echo "Using benchmark path: $BENCHMARK_PATH"
@@ -34,6 +37,11 @@ echo "Found RBX_API_KEY"
 export DATA_UPDATE_TOKEN
 echo "Found DATA_UPDATE_TOKEN"
 
+# Initialize and update
+echo "Initializing data submodule..."
+git submodule update --init --recursive
+echo "Data submodule initialized."
+
 echo "Publishing build..."
 PLACE_VERSION=$(sh scripts/workflow/benchmark/publish.sh | tail -n 1)
 export PLACE_VERSION
@@ -47,3 +55,23 @@ if [ -z "$BENCHMARK_RESULT" ]; then
 	exit 1
 fi
 echo "benchmark completed: $BENCHMARK_RESULT"
+
+DATA_SUBMODULE_PATH="data"
+
+# Commit the submodule addition
+echo "loading data submodules"
+git add .gitmodules "$DATA_SUBMODULE_PATH"
+git commit -m "Add benchmark data submodule"
+
+echo "writing benchmark results to file..."
+# write BENCHMARK results to file
+echo "$BENCHMARK_RESULT" > "$DATA_SUBMODULE_PATH/results.txt"
+
+# make a branch off of the submodule "data"
+echo "creating data release branch..."
+cd $DATA_SUBMODULE_PATH
+# swap . with "-" for release name
+BRANCH_NAME=$(echo "$DATA_RELEASE_NAME" | tr '.' '-')
+git checkout -b "release/$BRANCH_NAME" origin/main  # or whatever base branch/commit
+cd ..
+

@@ -7,7 +7,7 @@ local SaveUtil = require(game.ReplicatedStorage.Shared.SaveUtil)
 local Logger = require(game.ReplicatedStorage.Shared.Logger)
 -- Types
 -- Constants
-local IS_FLAT = true
+local IS_FLAT = false
 -- Variables
 -- References
 local Benchmarks = game.ServerScriptService.Server.benchmarks
