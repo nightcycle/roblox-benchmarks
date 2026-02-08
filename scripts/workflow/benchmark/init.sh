@@ -1,6 +1,6 @@
 #!/bin/sh
 set -e
-echo "running benchmark"
+echo "Running benchmark"
 : "${BENCHMARK_PATH:=src/server/benchmarks}"
 export BENCHMARK_PATH
 echo "Using benchmark path: $BENCHMARK_PATH"
@@ -20,9 +20,17 @@ echo "Using universe id: $UNIVERSE_ID"
 export PLACE_ID
 echo "Using place id: $PLACE_ID"
 : "${API_KEY:?API_KEY is not set, it should have publish and luau execution perms}"
-echo "found API_KEY"
+echo "Found API_KEY"
 export API_KEY
-
+echo "Publishing build..."
 PLACE_VERSION=$(sh scripts/workflow/benchmark/publish.sh | tail -n 1)
 export PLACE_VERSION
 echo "Place version: $PLACE_VERSION"
+echo "executing benchmark..."
+# scripts/workflow/benchmark/run.sh "$BENCHMARK_PATH"
+BENCHMARK_RESULT=$(sh scripts/workflow/benchmark/run.sh "$BENCHMARK_PATH" | tail -n 1)
+if [ -z "$BENCHMARK_RESULT" ]; then
+	echo "benchmark failed"
+	exit 1
+fi
+echo "benchmark completed: $BENCHMARK_RESULT"

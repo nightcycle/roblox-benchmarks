@@ -10,6 +10,6 @@ PUBLISH_RESPONSE=$(rbxcloud experience publish \
 	--version-type "saved" \
 	--pretty
 )
-# extract the number after '"versionNumber":' in $PUBLISH_RESPONSE
-VERSION_NUMBER=$(echo "$PUBLISH_RESPONSE" | grep -oP '"versionNumber":\s*\K\d+')
+echo "Publish response: $PUBLISH_RESPONSE"
+VERSION_NUMBER=$(echo "$PUBLISH_RESPONSE" | jq -r '.versionNumber')
 echo "$VERSION_NUMBER"
