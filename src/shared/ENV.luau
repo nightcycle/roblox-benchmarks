@@ -11,11 +11,23 @@
 local DEFAULT_ENV = {
 	IS_VERBOSE = true,
 	FILTER_PATH = "",
+	IS_DEBUG = true,
+	DATA_DIR = "data/src",
+	AGENT_OUTPUT = {
+		summary = "",
+		raw = {},
+	} :: {
+		summary: string,
+		raw: { [string]: string },
+	},
 }
-setmetatable(DEFAULT_ENV, {
-	__index = function(s, k): any?
+local out = setmetatable({}, {
+	__index = function(_, k): any?
 		local v = _G[k]
 		local dV = rawget(DEFAULT_ENV, k)
+		if dV == nil then
+			error(`Attempt to access undefined key "{k}" in ENV`)
+		end
 		if typeof(v) == "string" then
 			if typeof(dV) == "boolean" then
 				if v == "true" then
@@ -40,5 +52,10 @@ setmetatable(DEFAULT_ENV, {
 			return v
 		end
 	end,
+	__newindex = function(_, k, v)
+		assert(rawget(DEFAULT_ENV, k) ~= nil, `Attempt to set undefined key "{k}" in ENV`)
+		_G[k] = v
+	end,
 })
-return DEFAULT_ENV
+
+return out :: typeof(DEFAULT_ENV)

@@ -12,7 +12,8 @@ echo "Using place id: $PLACE_ID"
 echo "Using place version: $PLACE_VERSION"
 echo "Using script path: $SCRIPT_PATH"
 SCRIPT_CONTENTS=$(cat "$SCRIPT_PATH")
-
+# append "_G.FILTER_PATH='$BENCHMARK_PATH' to the top of $SCRIPT_CONTENTS"
+SCRIPT_CONTENTS="_G.FILTER_PATH='${BENCHMARK_PATH}'_G.DATA_DIR='${DATA_DIR_PATH}';_G.IS_DEBUG=false;${SCRIPT_CONTENTS}"
 echo "Using script contents:"
 echo "------------------------"
 echo "$SCRIPT_CONTENTS"
@@ -21,7 +22,7 @@ EXECUTE_RESPONSE=$(rbxcloud luau execute \
 	-u "$UNIVERSE_ID" \
 	-i "$PLACE_ID" \
 	-r "$PLACE_VERSION" \
-	-f "$SCRIPT_PATH" \
+	-s "${SCRIPT_CONTENTS}" \
 	-t "${TIMEOUT}s" \
 	-a "$RBX_API_KEY" \
 	-p
@@ -53,8 +54,7 @@ while [ "$TASK_STATE" = "PROCESSING" ] && [ $ATTEMPTS -lt $TIMEOUT ]; do
 		-r "$PLACE_VERSION" \
 		-s "$SESSION_ID" \
 		-t "$TASK_ID" \
-		-a "$RBX_API_KEY" \
-		-p
+		-a "$RBX_API_KEY"
 	)
 	set -e
 	# if TASK_RESPONSE is empty
@@ -73,4 +73,5 @@ if [ "$TASK_STATE" != "COMPLETE" ]; then
 	echo "task failed"
 	exit 1
 fi
-echo "$TASK_OUTPUT"
+# echo this TASK_OUTPUT (a json value) on a single line
+echo "$TASK_OUTPUT" | jq -c '.'

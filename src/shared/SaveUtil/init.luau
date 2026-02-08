@@ -1,18 +1,16 @@
 --!strict
-local RunService = game:GetService("RunService")
 -- Services
 -- Packages
 -- Modules
 local FileUtil = require(script.FileUtil)
+local ENV = require(game.ReplicatedStorage.Shared.ENV)
 -- Types
 -- Constants
-local DEBUG_PREFIX = "data"
-local IS_DEBUG = RunService:IsStudio()
 -- Variables
 -- References
 -- Private Functions
-function getDebugFinalPath(path: string): string
-	return DEBUG_PREFIX .. "/" .. path
+function getFinalPath(path: string): string
+	return ENV.DATA_DIR .. "/" .. path
 end
 function getParentDirectory(path: string): string
 	local segments = path:split("/")
@@ -23,18 +21,19 @@ end
 local Util = {}
 
 function Util.newSession()
-	if IS_DEBUG then
-		if FileUtil.Path.getIfExists(DEBUG_PREFIX) then
-			FileUtil.run(`rm -rf "{DEBUG_PREFIX}"`)
+	if ENV.IS_DEBUG then
+		if FileUtil.Path.getIfExists(ENV.DATA_DIR) then
+			FileUtil.run(`rm -rf "{ENV.DATA_DIR}"`)
 		end
 	else
-		error("Not in debug mode; cannot write to file system.")
+		ENV.AGENT_OUTPUT.summary = ""
+		table.clear(ENV.AGENT_OUTPUT.raw)
 	end
 end
 
 function Util.saveCSV(path: string, content: string)
-	if IS_DEBUG then
-		local filePath = getDebugFinalPath(path)
+	local filePath = getFinalPath(path)
+	if ENV.IS_DEBUG then
 		local parentDir = getParentDirectory(filePath)
 		if not FileUtil.Path.getIfExists(parentDir) then
 			FileUtil.makeDirectories(parentDir)
@@ -44,14 +43,14 @@ function Util.saveCSV(path: string, content: string)
 		end
 		FileUtil.write(filePath, content)
 	else
-		error("Not in debug mode; cannot write to file system.")
+		ENV.AGENT_OUTPUT.raw[filePath] = content
 	end
 end
 
 function Util.appendCSV(path: string, row: string, header: string?)
 	row = "\n" .. row
-	if IS_DEBUG then
-		local filePath = getDebugFinalPath(path)
+	if ENV.IS_DEBUG then
+		local filePath = getFinalPath(path)
 		local parentDir = getParentDirectory(filePath)
 		if not FileUtil.Path.getIfExists(parentDir) then
 			FileUtil.makeDirectories(parentDir)
@@ -61,7 +60,10 @@ function Util.appendCSV(path: string, row: string, header: string?)
 		end
 		FileUtil.append(filePath, row)
 	else
-		error("Not in debug mode; cannot write to file system.")
+		if ENV.AGENT_OUTPUT.summary == "" and header then
+			ENV.AGENT_OUTPUT.summary = header
+		end
+		ENV.AGENT_OUTPUT.summary ..= row
 	end
 end
 
