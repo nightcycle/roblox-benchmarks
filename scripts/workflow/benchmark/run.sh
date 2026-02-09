@@ -48,21 +48,6 @@ while [ "$TASK_STATE" = "PROCESSING" ]; do #&& [ $ATTEMPTS -lt $TIMEOUT ]; do
 		--request GET "https://apis.roblox.com/cloud/v2/universes/${UNIVERSE_ID}/places/${PLACE_ID}/versions/${PLACE_VERSION}/luau-execution-sessions/${SESSION_ID}/tasks/${TASK_ID}" \
 		--header "x-api-key: $RBX_API_KEY"
 	)
-	# LOGS_RESPONSE=$(rbxcloud luau get-logs \
-	# 	-u "$UNIVERSE_ID" \
-	# 	-i "$PLACE_ID" \
-	# 	-r "$PLACE_VERSION" \
-	# 	-s "$SESSION_ID" \
-	# 	-t "$TASK_ID" \
-	# 	-a "$RBX_API_KEY" \
-	# 	-w "flat" \
-	# 	-p
-	# )
-	# echo "$LOGS_RESPONSE"
-	# NEXT_PAGE_TOKEN=$(printf '%s' "$LOGS_RESPONSE" | jq -r '.nextPageToken')
-	# if [ -n "$NEXT_PAGE_TOKEN" ]; then
-	# 	echo "$NEXT_PAGE_TOKEN"
-	# fi
 	TASK_RESPONSE="$TASK_RES_HOLDER"
 	TASK_STATE=$(printf '%s' "$TASK_RESPONSE" | jq -r '.state')
 	echo "Task state: $TASK_STATE"
@@ -75,6 +60,21 @@ done
 
 if [ "$TASK_STATE" != "COMPLETE" ]; then
 	echo "task failed"
+	LOGS_RESPONSE=$(rbxcloud luau get-logs \
+		-u "$UNIVERSE_ID" \
+		-i "$PLACE_ID" \
+		-r "$PLACE_VERSION" \
+		-s "$SESSION_ID" \
+		-t "$TASK_ID" \
+		-a "$RBX_API_KEY" \
+		-w "flat" \
+		-p
+	)
+	echo "$LOGS_RESPONSE"
+	NEXT_PAGE_TOKEN=$(printf '%s' "$LOGS_RESPONSE" | jq -r '.nextPageToken')
+	if [ -n "$NEXT_PAGE_TOKEN" ]; then
+		echo "$NEXT_PAGE_TOKEN"
+	fi
 	printf '%s' "$TASK_RESPONSE" > "$RAW_RESULTS_FILE"
 	exit 1
 fi

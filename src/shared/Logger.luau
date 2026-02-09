@@ -17,11 +17,16 @@ Util.log = function(str: string)
 		if str:sub(1, 1) == "\n" then
 			print()
 		end
-		-- local t = DateTime.now():ToIsoDate()
-		local src, _currentLine = debug.info(2, "sl")
-		-- get text in quotes for src
-		local name = src:match('"(.-)"')
-		print(`{os.clock()}\t| {name}\t| {str}`)
+
+		if ENV.IS_DEBUG then
+			-- local t = DateTime.now():ToIsoDate()
+			local src, _currentLine = debug.info(2, "sl")
+			-- get text in quotes for src
+			local name = src:match('"(.-)"')
+			print(`{os.clock()}\t| {name}\t| {str}`)
+		else
+			print(`{os.clock()} | {str}`)
+		end
 	end
 end
 Util.wlog = function(str: string)
@@ -30,11 +35,16 @@ Util.wlog = function(str: string)
 		if str:sub(1, 1) == "\n" then
 			print()
 		end
-		-- local t = DateTime.now():ToIsoDate()
-		local src, _currentLine = debug.info(2, "sl")
-		-- get text in quotes for src
-		local name = src:match('"(.-)"')
-		warn(`{os.clock()}\t| {name}\t| {str}`)
+
+		if ENV.IS_DEBUG then
+			-- local t = DateTime.now():ToIsoDate()
+			local src, _currentLine = debug.info(2, "sl")
+			-- get text in quotes for src
+			local name = src:match('"(.-)"')
+			warn(`{os.clock()}\t| {name}\t| {str}`)
+		else
+			warn(`{os.clock()} | {str}`)
+		end
 	end
 end
 
