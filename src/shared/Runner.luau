@@ -83,6 +83,7 @@ function Runner.new(target: ModuleScript): Runner
 	return {
 		Target = target,
 		load = function(self: Runner): Benchmark
+			Logger.log(`\t - load - loading {target:GetFullName()}`)
 			local benchmarkModule = require(self.Target) :: Benchmark
 			return benchmarkModule
 		end,
@@ -94,7 +95,7 @@ function Runner.new(target: ModuleScript): Runner
 			local data: { Sample } = {}
 
 			local sampleParameters = table.create(benchmark.Samples)
-
+			Logger.log(`\tsolve - generating parameters for {target:GetFullName()}`)
 			for sample = 1, benchmark.Samples do
 				sampleParameters[sample] = benchmark:generate(rng)
 			end
@@ -127,6 +128,7 @@ function Runner.new(target: ModuleScript): Runner
 			end
 
 			local count = benchmark.Samples
+			Logger.log(`\tsolve - running {count} samples for {target:GetFullName()}`)
 			for sample = 1, count do
 				if sample % CONSTANTS.PAUSE_EVERY_N_SAMPLES == 0 then
 					task.wait()
