@@ -65,7 +65,7 @@ while [ "$TASK_STATE" = "PROCESSING" ]; do #&& [ $ATTEMPTS -lt $TIMEOUT ]; do
 		echo "$NEXT_PAGE_TOKEN"
 	fi
 	TASK_RESPONSE="$TASK_RES_HOLDER"
-	echo "Task response: $TASK_RESPONSE"
+	# echo "Task response: $TASK_RESPONSE"
 	TASK_STATE=$(echo "$TASK_RESPONSE" | jq -r '.state')
 	echo "Task state: $TASK_STATE"
 	if [ "$TASK_STATE" = "COMPLETE" ]; then

@@ -9,6 +9,7 @@ RAW_MAP=$(echo "$EXECUTE_RESPONSE" | jq -r '.data.raw')
 
 # for each key,value in RAW_MAP
 for path in $(echo "$RAW_MAP" | jq -r 'keys[]'); do
+	echo "Processing path: $path"
 	value=$(echo "$RAW_MAP" | jq -r --arg k "$path" '.[$k]')
 	# get directory above the file path
 	dir=$(dirname "${DATA_DIR_PATH}/${path}")
