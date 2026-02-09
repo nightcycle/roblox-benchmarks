@@ -12,6 +12,7 @@ local DEFAULT_ENV = {
 	IS_VERBOSE = true,
 	FILTER_PATH = "",
 	IS_DEBUG = true,
+	IS_FLAT = false,
 	DATA_DIR = "data/src",
 	AGENT_OUTPUT = {
 		summary = "",
