@@ -6,7 +6,7 @@ echo "using raw results file: $RAW_RESULTS_FILE"
 BENCHMARK_PATH="${1:?'arg 1, BENCHMARK_PATH, is not set'}"
 echo "Using benchmark path: $BENCHMARK_PATH"
 SCRIPT_PATH="./scripts/workflow/benchmark/Agent.luau"
-TIMEOUT=240
+TIMEOUT=1800
 # append an s to the end of TIMEOUT
 echo "Executing benchmark script..."
 echo "Using universe id: $UNIVERSE_ID"
@@ -73,6 +73,7 @@ while [ "$TASK_STATE" = "PROCESSING" ]; do #&& [ $ATTEMPTS -lt $TIMEOUT ]; do
 	fi
 	sleep 5
 done
+
 if [ "$TASK_STATE" != "COMPLETE" ]; then
 	echo "task failed"
 	printf '%s' "$TASK_RESPONSE" > "$RAW_RESULTS_FILE"
