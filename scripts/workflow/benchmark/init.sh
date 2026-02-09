@@ -54,7 +54,7 @@ if [ -z "$BENCHMARK_RESULT" ]; then
 	echo "benchmark failed"
 	exit 1
 fi
-echo "benchmark completed: $BENCHMARK_RESULT"
+echo "benchmark completed"
 
 cd $DATA_SUBMODULE_PATH
 BRANCH_NAME_ENDING=$(echo "$DATA_RELEASE_VERSION" | tr '.' '-')
