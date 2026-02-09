@@ -6,7 +6,6 @@ echo "using raw results file: $RAW_RESULTS_FILE"
 BENCHMARK_PATH="${1:?'arg 1, BENCHMARK_PATH, is not set'}"
 echo "Using benchmark path: $BENCHMARK_PATH"
 SCRIPT_PATH="./scripts/workflow/benchmark/Agent.luau"
-TIMEOUT=1800
 # append an s to the end of TIMEOUT
 echo "Executing benchmark script..."
 echo "Using universe id: $UNIVERSE_ID"
@@ -25,7 +24,7 @@ EXECUTE_RESPONSE=$(rbxcloud luau execute \
 	-i "$PLACE_ID" \
 	-r "$PLACE_VERSION" \
 	-s "${SCRIPT_CONTENTS}" \
-	-t "${TIMEOUT}s" \
+	-t "300s" \
 	-a "$RBX_API_KEY" \
 	-p
 )

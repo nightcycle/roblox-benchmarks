@@ -21,5 +21,16 @@ jq -r '.output.results[0].data.raw | keys[]' "$RAW_RESULTS_FILE" | tr -d '\r' | 
     jq -r --arg k "$path" '.output.results[0].data.raw[$k]' "$RAW_RESULTS_FILE" > "${DATA_DIR_PATH}/${path}"
 done
 
-# Fix: correct path is .output.results[0].data.summary, not .data.summary
-jq -r '.output.results[0].data.summary' "$RAW_RESULTS_FILE" > "$DATA_DIR_PATH/summary.csv"
+# if summary.csv exists, skip the first line when appending
+if [ -f "${DATA_DIR_PATH}/summary.csv" ]; then
+    # skip the first newline
+    SUMMARY_CONTENT=$(jq -r '.output.results[0].data.summary' "$RAW_RESULTS_FILE" | tail -n +2)
+    # remove leading newline
+    echo "summary content to append:"
+    echo ""
+    echo "$SUMMARY_CONTENT"
+    echo ""
+    printf '%s\n' "$SUMMARY_CONTENT" >> "${DATA_DIR_PATH}/summary.csv"
+else
+    jq -r '.output.results[0].data.summary' "$RAW_RESULTS_FILE" > "$DATA_DIR_PATH/summary.csv"
+fi
