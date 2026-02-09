@@ -15,11 +15,11 @@ echo "Using place version: $PLACE_VERSION"
 echo "Using script path: $SCRIPT_PATH"
 SCRIPT_CONTENTS=$(cat "$SCRIPT_PATH")
 # append "_G.FILTER_PATH='$BENCHMARK_PATH' to the top of $SCRIPT_CONTENTS"
-SCRIPT_CONTENTS="_G.FILTER_PATH='${BENCHMARK_PATH}'_G.DATA_DIR='${DATA_DIR_PATH}';_G.IS_DEBUG=false;${SCRIPT_CONTENTS}"
-echo "Using script contents:"
-echo "------------------------"
-echo "$SCRIPT_CONTENTS"
-echo "------------------------"
+SCRIPT_CONTENTS="_G.FILTER_PATH='${BENCHMARK_PATH}';_G.DATA_DIR='${DATA_DIR_PATH}';_G.IS_DEBUG=false;${SCRIPT_CONTENTS}"
+# echo "Using script contents:"
+# echo "------------------------"
+# echo "$SCRIPT_CONTENTS"
+# echo "------------------------"
 EXECUTE_RESPONSE=$(rbxcloud luau execute \
 	-u "$UNIVERSE_ID" \
 	-i "$PLACE_ID" \
@@ -29,7 +29,7 @@ EXECUTE_RESPONSE=$(rbxcloud luau execute \
 	-a "$RBX_API_KEY" \
 	-p
 )
-printf '%s' "response: $EXECUTE_RESPONSE"
+# printf '%s' "response: $EXECUTE_RESPONSE"
 EXECUTE_PATH=$(printf '%s' "$EXECUTE_RESPONSE" | jq -r '.path')
 
 # universes/9690745121/places/111123068113322/versions/3/luau-execution-sessions/157bfe18-3070-4950-b9b4-3a0a34376950/tasks/157bfe18-3070-4950-b9b4-3a0a34376950
@@ -43,7 +43,7 @@ echo "Waiting for execution to complete"
 TASK_STATE=$(printf '%s' "$EXECUTE_RESPONSE" | jq -r '.state')
 TASK_RESPONSE=""
 while [ "$TASK_STATE" = "PROCESSING" ]; do #&& [ $ATTEMPTS -lt $TIMEOUT ]; do
-	echo "polling.."
+	# echo "polling.."
 	TASK_RES_HOLDER=""
 	TASK_RES_HOLDER=$(curl -s \
 		--request GET "https://apis.roblox.com/cloud/v2/universes/${UNIVERSE_ID}/places/${PLACE_ID}/versions/${PLACE_VERSION}/luau-execution-sessions/${SESSION_ID}/tasks/${TASK_ID}" \
