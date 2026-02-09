@@ -59,13 +59,10 @@ cd $DATA_SUBMODULE_PATH
 BRANCH_NAME_ENDING=$(printf '%s' "$DATA_RELEASE_VERSION" | tr '.' '-')
 BRANCH_NAME="release/$BRANCH_NAME_ENDING"
 # check if branch exists
-if git show-ref --verify --quiet "origin/refs/heads/$BRANCH_NAME"; then
-	echo "branch $BRANCH_NAME exists, checking out"
-	git checkout "$BRANCH_NAME"
-else
-	echo "branch $BRANCH_NAME does not exist, creating"
-	git checkout -b "$BRANCH_NAME"
-fi
+set +e
+git checkout -b "$BRANCH_NAME"
+set -e
+git checkout "$BRANCH_NAME"
 cd ..
 
 echo "processing benchmark results..."
@@ -75,6 +72,8 @@ rm -f "$RAW_RESULTS_FILE"
 
 # # commit and push the results
 cd $DATA_SUBMODULE_PATH
+# git add all files under src
+git add src/
 git commit -m "Update benchmark results for $DATA_RELEASE_VERSION"
 git push origin "$BRANCH_NAME"
 echo "benchmark results committed and pushed to branch: $BRANCH_NAME"
