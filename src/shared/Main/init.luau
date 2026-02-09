@@ -39,7 +39,7 @@ return function()
 	Logger.log("\nstarting benchmark run...")
 	local modules: { ModuleScript } = {}
 	local filterPath = ENV.FILTER_PATH
-	filterPath = filterPath:gsub("%p/src/", "src/"):gsub("%pluau", "")
+	filterPath = filterPath:gsub("%./src/", "src/"):gsub("%.luau", "")
 	filterPath = filterPath
 		:gsub("src/server", "game/ServerScriptService/Server")
 		:gsub("src/shared", "game/ReplicatedStorage/Shared")
