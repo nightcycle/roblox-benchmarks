@@ -45,7 +45,7 @@ TASK_RESPONSE=""
 while [ "$TASK_STATE" = "PROCESSING" ]; do #&& [ $ATTEMPTS -lt $TIMEOUT ]; do
 	echo "polling.."
 	TASK_RES_HOLDER=""
-	TASK_RES_HOLDER=$(curl \
+	TASK_RES_HOLDER=$(curl -q \
 		--request GET "https://apis.roblox.com/cloud/v2/universes/${UNIVERSE_ID}/places/${PLACE_ID}/versions/${PLACE_VERSION}/luau-execution-sessions/${SESSION_ID}/tasks/${TASK_ID}" \
 		--header "x-api-key: $RBX_API_KEY"
 	)

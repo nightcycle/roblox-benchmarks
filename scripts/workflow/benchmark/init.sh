@@ -5,7 +5,7 @@ echo "Running benchmark"
 DATA_RELEASE_VERSION="${1:?'arg 1, DATA_RELEASE_VERSION, is not set'}"
 echo "Using data release version: $DATA_RELEASE_VERSION"
 
-: "${BENCHMARK_PATH:=src/server/benchmarks/types/vector3/init}"
+: "${BENCHMARK_PATH:=src/server/benchmarks/types/vector3}"
 export BENCHMARK_PATH
 echo "Using benchmark path: $BENCHMARK_PATH"
 

@@ -1,6 +1,5 @@
 --!strict
 -- Services
-local EncodingService = game:GetService("EncodingService")
 -- Packages
 -- Modules
 local FileUtil = require(script.FileUtil)
@@ -44,7 +43,7 @@ function Util.saveCSV(path: string, content: string)
 		end
 		FileUtil.write(filePath, content)
 	else
-		ENV.AGENT_OUTPUT.raw[filePath] = content
+		ENV.AGENT_OUTPUT.raw[path] = content
 	end
 end
 
