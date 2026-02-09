@@ -1,0 +1,4 @@
+# make all txt lf
+**.txt text eol=lf
+**.sh text eol=lf
+**.luau text eol=lf

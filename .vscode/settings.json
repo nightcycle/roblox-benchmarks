@@ -104,6 +104,7 @@
 		"editor.defaultFormatter": "JohnnyMorganz.stylua"
 	},
 	"secrets.enabledFolders": [
+		"roblox-benchmark",
 		"roblox-benchmark"
 	],
 }
