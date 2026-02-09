@@ -47,6 +47,11 @@ DATA_SUBMODULE_PATH="data"
 DATA_DIR_PATH="$DATA_SUBMODULE_PATH/src"
 export DATA_DIR_PATH
 
+# if DATA_DIR_PATH doesn't exist, create it
+if [ ! -d "$DATA_DIR_PATH" ]; then
+	mkdir -p "$DATA_DIR_PATH"
+fi
+
 # RAW_RESULTS_FILE=$(mktemp)
 RAW_RESULTS_FILE="$DATA_DIR_PATH/raw.json"
 export RAW_RESULTS_FILE
