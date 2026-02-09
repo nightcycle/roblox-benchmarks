@@ -5,7 +5,7 @@ echo "Running benchmark"
 DATA_RELEASE_VERSION="${1:?'arg 1, DATA_RELEASE_VERSION, is not set'}"
 echo "Using data release version: $DATA_RELEASE_VERSION"
 
-: "${BENCHMARK_PATH:=src/server/benchmarks}"
+: "${BENCHMARK_PATH:=src/server/benchmarks/types/vector3}"
 export BENCHMARK_PATH
 echo "Using benchmark path: $BENCHMARK_PATH"
 
@@ -48,7 +48,7 @@ DATA_DIR_PATH="$DATA_SUBMODULE_PATH/src"
 export DATA_DIR_PATH
 
 echo "executing benchmark..."
-# scripts/workflow/benchmark/run.sh "$BENCHMARK_PATH"
+scripts/workflow/benchmark/run.sh "$BENCHMARK_PATH"
 BENCHMARK_RESULT=$(sh scripts/workflow/benchmark/run.sh "$BENCHMARK_PATH" | tail -n 1)
 if [ -z "$BENCHMARK_RESULT" ]; then
 	echo "benchmark failed"
