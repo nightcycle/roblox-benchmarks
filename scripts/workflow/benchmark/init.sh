@@ -79,7 +79,7 @@ rm -f "$RAW_RESULTS_FILE"
 cd $DATA_SUBMODULE_PATH
 # git add all files under src
 git add src/
-git commit -m "benchmark data generated from $BENCHMARK_PATH"
+git commit -m "benchmark data generated from '$BENCHMARK_PATH' for release '$DATA_RELEASE_VERSION'"
 git push origin "$BRANCH_NAME"
 echo "benchmark results committed and pushed to branch: $BRANCH_NAME"
 cd ..
