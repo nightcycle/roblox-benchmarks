@@ -3,7 +3,7 @@ set -e
 
 RAW_BENCHMARK_RESULT="${1:?'arg 1, RAW_BENCHMARK_RESULT, is not set'}"
 echo "$RAW_BENCHMARK_RESULT" > "$DATA_DIR_PATH/results.json"
-
+echo "$RAW_BENCHMARK_RESULT"
 RAW_MAP=$(echo "$EXECUTE_RESPONSE" | jq -r '.data.raw')
 
 # for each key,value in RAW_MAP
@@ -20,5 +20,5 @@ for path in $(echo "$RAW_MAP" | jq -r 'keys[]'); do
 done
 
 SUMMARY=$(echo "$EXECUTE_RESPONSE" | jq -r '.data.summary')
-
+echo "sum $SUMMARY"
 echo "$SUMMARY" > "$DATA_DIR_PATH/summary.csv"
