@@ -2,7 +2,6 @@
 set -e
 
 RAW_BENCHMARK_RESULT="${1:?'arg 1, RAW_BENCHMARK_RESULT, is not set'}"
-
 echo "$RAW_BENCHMARK_RESULT" > "$DATA_DIR_PATH/results.json"
 
 RAW_MAP=$(echo "$EXECUTE_RESPONSE" | jq -r '.data.raw')
