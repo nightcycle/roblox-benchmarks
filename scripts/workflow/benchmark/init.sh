@@ -58,28 +58,27 @@ echo "benchmark completed"
 cd $DATA_SUBMODULE_PATH
 BRANCH_NAME_ENDING=$(printf '%s' "$DATA_RELEASE_VERSION" | tr '.' '-')
 BRANCH_NAME="release/$BRANCH_NAME_ENDING"
-# git pull origin "$BRANCH_NAME"
-# if ! git show-ref --verify --quiet "refs/heads/$BRANCH_NAME"; then
-# 	echo "creating data release branch at $BRANCH_NAME"
-# 	git checkout -b "$BRANCH_NAME" origin/main  # or whatever base branch/commit
-# 	echo "data release branch created: $BRANCH_NAME"
-# else
-# 	git checkout "$BRANCH_NAME"
-# 	echo "data release branch checked out: $BRANCH_NAME"
-# fi
+# check if branch exists
+if git show-ref --verify --quiet "origin/refs/heads/$BRANCH_NAME"; then
+	echo "branch $BRANCH_NAME exists, checking out"
+	git checkout "$BRANCH_NAME"
+else
+	echo "branch $BRANCH_NAME does not exist, creating"
+	git checkout -b "$BRANCH_NAME"
+fi
 cd ..
 
 echo "processing benchmark results..."
 sh scripts/workflow/benchmark/process-data.sh
 echo "finished processing benchmark results"
-# rm -f "$RAW_RESULTS_FILE"
+rm -f "$RAW_RESULTS_FILE"
 
 # # commit and push the results
-# cd $DATA_SUBMODULE_PATH
-# git commit -m "Update benchmark results for $DATA_RELEASE_VERSION"
-# git push origin "$BRANCH_NAME"
-# echo "benchmark results committed and pushed to branch: $BRANCH_NAME"
-# cd ..
+cd $DATA_SUBMODULE_PATH
+git commit -m "Update benchmark results for $DATA_RELEASE_VERSION"
+git push origin "$BRANCH_NAME"
+echo "benchmark results committed and pushed to branch: $BRANCH_NAME"
+cd ..
 
 echo "benchmark workflow completed successfully."
 exit 0
