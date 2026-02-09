@@ -11,5 +11,5 @@ PUBLISH_RESPONSE=$(rbxcloud experience publish \
 	--pretty
 )
 echo "Publish response: $PUBLISH_RESPONSE"
-VERSION_NUMBER=$(echo "$PUBLISH_RESPONSE" | jq -r '.versionNumber')
+VERSION_NUMBER=$(printf '%s' "$PUBLISH_RESPONSE" | jq -r '.versionNumber')
 echo "$VERSION_NUMBER"

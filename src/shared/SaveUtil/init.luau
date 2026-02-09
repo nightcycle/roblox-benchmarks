@@ -1,5 +1,6 @@
 --!strict
 -- Services
+local EncodingService = game:GetService("EncodingService")
 -- Packages
 -- Modules
 local FileUtil = require(script.FileUtil)

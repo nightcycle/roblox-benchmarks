@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 echo "running benchmark"
+RAW_RESULTS_FILE="${RAW_RESULTS_FILE:?'env var RAW_RESULTS_FILE is not set'}"
+echo "using raw results file: $RAW_RESULTS_FILE"
 BENCHMARK_PATH="${1:?'arg 1, BENCHMARK_PATH, is not set'}"
 echo "Using benchmark path: $BENCHMARK_PATH"
 SCRIPT_PATH="./scripts/workflow/benchmark/Agent.luau"
@@ -27,21 +29,19 @@ EXECUTE_RESPONSE=$(rbxcloud luau execute \
 	-a "$RBX_API_KEY" \
 	-p
 )
-echo "response: $EXECUTE_RESPONSE"
-EXECUTE_PATH=$(echo "$EXECUTE_RESPONSE" | jq -r '.path')
+printf '%s' "response: $EXECUTE_RESPONSE"
+EXECUTE_PATH=$(printf '%s' "$EXECUTE_RESPONSE" | jq -r '.path')
 
 # universes/9690745121/places/111123068113322/versions/3/luau-execution-sessions/157bfe18-3070-4950-b9b4-3a0a34376950/tasks/157bfe18-3070-4950-b9b4-3a0a34376950
 # get the number after /tasks/ in EXECUTE_PATH
-TASK_ID=$(echo "$EXECUTE_PATH" | awk -F'/tasks/' '{print $2}')
+TASK_ID=$(printf '%s' "$EXECUTE_PATH" | awk -F'/tasks/' '{print $2}')
 echo "Task ID: $TASK_ID"
-SESSION_ID=$(echo "$EXECUTE_PATH" | awk -F'/luau-execution-sessions/' '{print $2}' | awk -F'/tasks/' '{print $1}')
+SESSION_ID=$(printf '%s' "$EXECUTE_PATH" | awk -F'/luau-execution-sessions/' '{print $2}' | awk -F'/tasks/' '{print $1}')
 echo "Session ID: $SESSION_ID"
 
 echo "Waiting for execution to complete"
-TASK_STATE=$(echo "$EXECUTE_RESPONSE" | jq -r '.state')
-TASK_OUTPUT=""
+TASK_STATE=$(printf '%s' "$EXECUTE_RESPONSE" | jq -r '.state')
 TASK_RESPONSE=""
-# ATTEMPTS=0
 while [ "$TASK_STATE" = "PROCESSING" ]; do #&& [ $ATTEMPTS -lt $TIMEOUT ]; do
 	echo "polling.."
 	TASK_RES_HOLDER=""
@@ -60,23 +60,24 @@ while [ "$TASK_STATE" = "PROCESSING" ]; do #&& [ $ATTEMPTS -lt $TIMEOUT ]; do
 		-p
 	)
 	echo "$LOGS_RESPONSE"
-	NEXT_PAGE_TOKEN=$(echo "$LOGS_RESPONSE" | jq -r '.nextPageToken')
+	NEXT_PAGE_TOKEN=$(printf '%s' "$LOGS_RESPONSE" | jq -r '.nextPageToken')
 	if [ -n "$NEXT_PAGE_TOKEN" ]; then
 		echo "$NEXT_PAGE_TOKEN"
 	fi
 	TASK_RESPONSE="$TASK_RES_HOLDER"
 	# echo "Task response: $TASK_RESPONSE"
-	TASK_STATE=$(echo "$TASK_RESPONSE" | jq -r '.state')
+	TASK_STATE=$(printf '%s' "$TASK_RESPONSE" | jq -r '.state')
 	echo "Task state: $TASK_STATE"
 	if [ "$TASK_STATE" = "COMPLETE" ]; then
-		TASK_OUTPUT=$(echo "$TASK_RESPONSE" | jq -r '.output.results[0]')
+		printf '%s' "$TASK_RESPONSE" > "$RAW_RESULTS_FILE"
+		break
 	fi
 	sleep 5
-	# ATTEMPTS=$((ATTEMPTS + 5))
 done
 if [ "$TASK_STATE" != "COMPLETE" ]; then
 	echo "task failed"
+	printf '%s' "$TASK_RESPONSE" > "$RAW_RESULTS_FILE"
 	exit 1
 fi
-# echo this TASK_OUTPUT (a json value) on a single line
-echo "$TASK_OUTPUT" | jq -c '.'
+
+exit 0

@@ -47,17 +47,16 @@ DATA_SUBMODULE_PATH="data"
 DATA_DIR_PATH="$DATA_SUBMODULE_PATH/src"
 export DATA_DIR_PATH
 
+# RAW_RESULTS_FILE=$(mktemp)
+RAW_RESULTS_FILE="$DATA_DIR_PATH/raw.json"
+export RAW_RESULTS_FILE
+
 echo "executing benchmark..."
-# scripts/workflow/benchmark/run.sh "$BENCHMARK_PATH"
-BENCHMARK_RESULT=$(sh scripts/workflow/benchmark/run.sh "$BENCHMARK_PATH" | tail -n 1)
-if [ -z "$BENCHMARK_RESULT" ]; then
-	echo "benchmark failed"
-	exit 1
-fi
+sh scripts/workflow/benchmark/run.sh "$BENCHMARK_PATH"
 echo "benchmark completed"
 
 cd $DATA_SUBMODULE_PATH
-BRANCH_NAME_ENDING=$(echo "$DATA_RELEASE_VERSION" | tr '.' '-')
+BRANCH_NAME_ENDING=$(printf '%s' "$DATA_RELEASE_VERSION" | tr '.' '-')
 BRANCH_NAME="release/$BRANCH_NAME_ENDING"
 # git pull origin "$BRANCH_NAME"
 # if ! git show-ref --verify --quiet "refs/heads/$BRANCH_NAME"; then
@@ -71,15 +70,16 @@ BRANCH_NAME="release/$BRANCH_NAME_ENDING"
 cd ..
 
 echo "processing benchmark results..."
-sh scripts/workflow/benchmark/process-data.sh "$BENCHMARK_RESULT"
+sh scripts/workflow/benchmark/process-data.sh
 echo "finished processing benchmark results"
+# rm -f "$RAW_RESULTS_FILE"
 
 # # commit and push the results
 # cd $DATA_SUBMODULE_PATH
 # git commit -m "Update benchmark results for $DATA_RELEASE_VERSION"
 # git push origin "$BRANCH_NAME"
 # echo "benchmark results committed and pushed to branch: $BRANCH_NAME"
-cd ..
+# cd ..
 
 echo "benchmark workflow completed successfully."
 exit 0
