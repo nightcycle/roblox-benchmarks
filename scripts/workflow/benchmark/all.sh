@@ -8,10 +8,10 @@ BRANCH_NAME="release/$BRANCH_NAME_ENDING"
 DATA_SUBMODULE_PATH="data"
 cd "$DATA_SUBMODULE_PATH"
 set +e
-git fetch origin "$BRANCH_NAME"
-git checkout -b "$BRANCH_NAME" "origin/$BRANCH_NAME"
+git fetch origin
+git checkout -b "$BRANCH_NAME"
 set -e
-git fetch origin "$BRANCH_NAME"
+git fetch origin
 git checkout "$BRANCH_NAME"
 cd ..
 git pull origin "$BRANCH_NAME"
