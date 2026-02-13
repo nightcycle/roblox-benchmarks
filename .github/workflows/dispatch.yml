@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       data-release-version:
-        description: 'the release version for the data'
+        description: "the release version for the data"
         required: true
 jobs:
   dispatch:
