@@ -6,9 +6,9 @@ RELEASE_VERSION="${1:?'arg 1, RELEASE_VERSION, is not set'}"
 BRANCH_NAME_ENDING=$(printf '%s' "$RELEASE_VERSION" | tr '.' '-')
 BRANCH_NAME="release/$BRANCH_NAME_ENDING"
 DATA_SUBMODULE_PATH="data"
+cd "$DATA_SUBMODULE_PATH"
 git pull origin "$BRANCH_NAME"
 git submodule update --init --recursive
-cd "$DATA_SUBMODULE_PATH"
 git rm -r src/
 git commit -m "reset data"
 git push origin "$BRANCH_NAME"
