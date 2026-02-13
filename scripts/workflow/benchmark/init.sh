@@ -2,6 +2,9 @@
 set -e
 echo "Running benchmark"
 
+# initialize git submodules
+git submodule update --init --recursive
+
 DATA_RELEASE_VERSION="${1:?'arg 1, DATA_RELEASE_VERSION, is not set'}"
 echo "Using data release version: $DATA_RELEASE_VERSION"
 

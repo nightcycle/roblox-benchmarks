@@ -15,6 +15,9 @@ inputs:
   data-release-version:
     description: the version of the data being uploaded
     required: true
+  data-update-token:
+    description: the token used to update the data submodule with the new benchmark results
+    required: true
 
 runs:
   using: "composite"
@@ -23,6 +26,8 @@ runs:
       uses: actions/checkout@v4
       with:
         fetch-depth: 1
+        submodules: true
+        token: ${{ inputs.data-update-token }}
 
     - name: Remove file-util line from rokit.toml
       shell: bash
@@ -38,6 +43,11 @@ runs:
       uses: dcarbone/install-jq-action@v2.1.0
       with:
         version: 'latest'
+
+    - name: Configure git credentials
+      shell: bash
+      run: |
+        git config --global url."https://x-access-token:${{ inputs.data-update-token }}@github.com/".insteadOf "https://github.com/"
 
     - name: Run shell script
       shell: bash
