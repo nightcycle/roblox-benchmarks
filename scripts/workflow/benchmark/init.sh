@@ -33,10 +33,6 @@ echo "Using place id: $PLACE_ID"
 export RBX_API_KEY
 echo "Found RBX_API_KEY"
 
-: "${DATA_UPDATE_TOKEN:?DATA_UPDATE_TOKEN is not set, you need it to commit / release results on the github repository}"
-export DATA_UPDATE_TOKEN
-echo "Found DATA_UPDATE_TOKEN"
-
 echo "Publishing build..."
 PLACE_VERSION=$(sh scripts/workflow/benchmark/publish.sh | tail -n 1)
 export PLACE_VERSION
