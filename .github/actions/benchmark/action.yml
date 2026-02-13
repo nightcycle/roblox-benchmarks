@@ -24,6 +24,11 @@ runs:
       with:
         fetch-depth: 1
 
+    - name: Remove file-util line from rokit.toml
+      shell: bash
+      run: |
+        sed -i '/file-util/d' rokit.toml
+
     - name: Setup Rokit
       uses: CompeyDev/setup-rokit@v0.1.2
       with:
