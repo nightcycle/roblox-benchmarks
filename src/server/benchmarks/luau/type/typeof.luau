@@ -10,6 +10,7 @@ local Benchmark = require(game.ReplicatedStorage.Shared.Benchmark)
 -- Private Functions
 -- Class
 return Benchmark.new(
+	{},
 	{
 		Benchmark.Parameter.Integer.new("a", 1),
 	},

@@ -5,11 +5,18 @@
 local Benchmark = require(game.ReplicatedStorage.Shared.Benchmark)
 -- Types
 -- Constants
+local TAGS = require(game.ReplicatedStorage.Shared.TAGS)
 -- Variables
 -- References
 -- Private Functions
 -- Class
 return Benchmark.new(
+	{
+		TAGS.OPERATIONS.LTE,
+		TAGS.TYPES.NUMBER,
+		TAGS.TYPES.FLOAT,
+		TAGS.FINDINGS.NO_INTEGER_GAINS,
+	},
 	{
 		Benchmark.Parameter.Integer.new("a"),
 		Benchmark.Parameter.Integer.new("b"),

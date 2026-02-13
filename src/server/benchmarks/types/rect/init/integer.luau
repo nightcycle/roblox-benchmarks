@@ -5,11 +5,17 @@
 local Benchmark = require(game.ReplicatedStorage.Shared.Benchmark)
 -- Types
 -- Constants
+local TAGS = require(game.ReplicatedStorage.Shared.TAGS)
 -- Variables
 -- References
 -- Private Functions
 -- Class
 return Benchmark.new(
+	{
+		TAGS.TYPES.RECT,
+		TAGS.OPERATIONS.INIT,
+		TAGS.FINDINGS.NO_INTEGER_GAINS,
+	},
 	{
 		Benchmark.Parameter.Integer.new("minX", nil, -1),
 		Benchmark.Parameter.Integer.new("minY", nil, -1),

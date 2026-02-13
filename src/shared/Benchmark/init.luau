@@ -6,6 +6,7 @@ local Parameter = require(script.Parameter)
 -- Types
 export type Parameter = Parameter.Parameter
 export type Benchmark = {
+	read Tags: { string },
 	read Repeats: number, -- how many times to re-run with the same parameters
 	read Samples: number, -- how many times the benchmark is run
 	read Parameters: { Parameter },
@@ -23,12 +24,17 @@ local Benchmark = {}
 Benchmark.Parameter = Parameter
 
 function Benchmark.new(
+	tags: { string },
 	parameters: { Parameter },
 	method: (...any) -> (),
 	repeats: number?,
 	samples: number?
 )
+	local sortedTags = table.clone(tags)
+	table.sort(sortedTags)
+	table.freeze(sortedTags)
 	return {
+		Tags = sortedTags,
 		Parameters = parameters,
 		Method = method,
 		Repeats = repeats or CONSTANTS.DEFAULT_REPEATS,

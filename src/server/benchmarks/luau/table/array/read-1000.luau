@@ -5,12 +5,19 @@
 local Benchmark = require(game.ReplicatedStorage.Shared.Benchmark)
 -- Types
 -- Constants
+local TAGS = require(game.ReplicatedStorage.Shared.TAGS)
 local SIZE = 1_000
 -- Variables
 -- References
 -- Private Functions
 -- Class
 return Benchmark.new(
+	{
+		TAGS.TYPES.ARRAY,
+		TAGS.TYPES.TABLE,
+		TAGS.OPERATIONS.READ,
+		TAGS.FINDINGS.ARRAY_LENGTH_DOESNT_REALLY_MATTER,
+	},
 	{
 		Benchmark.Parameter.Array.new("array", Benchmark.Parameter.Integer.new("value"), true, SIZE, SIZE),
 		Benchmark.Parameter.Integer.new("index", 1, SIZE),

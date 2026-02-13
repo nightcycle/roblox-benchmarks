@@ -6,11 +6,17 @@
 local Benchmark = require(game.ReplicatedStorage.Shared.Benchmark)
 -- Types
 -- Constants
+local TAGS = require(game.ReplicatedStorage.Shared.TAGS)
 -- Variables
 -- References
 -- Private Functions
 -- Class
 return Benchmark.new(
+	{
+		TAGS.TYPES.VECTOR2,
+		TAGS.OPERATIONS.MIN,
+		TAGS.FINDINGS.VECTOR2_IS_SLOW,
+	},
 	{
 		Benchmark.Parameter.Vector2.new("a"),
 		Benchmark.Parameter.Vector2.new("b"),
