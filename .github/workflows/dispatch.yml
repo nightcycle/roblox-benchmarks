@@ -11,6 +11,10 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 120
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
       - name: Call Benchmark Action
         uses: ./.github/actions/benchmark
         with:
