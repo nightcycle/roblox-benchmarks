@@ -2,6 +2,10 @@
 
 A set of luau benchmarks for operations, helping developers understand where they might be throwing away performance.
 
+## data
+
+You can access the data [here](https://github.com/nightcycle/roblox-benchmarks-data), it gets automatically updated when the rbx client updates. All benchmarks use picoseconds to allow their storage as integers, I usually convert them to microseconds when visualizing them.
+
 ## development
 
 ### initialization

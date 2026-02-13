@@ -2,50 +2,38 @@
 set -e
 RELEASE_VERSION="${1:?'arg 1, RELEASE_VERSION, is not set'}"
 
-BENCHMARK_PATH=src/server/benchmarks/types/brickcolor
-export BENCHMARK_PATH
+export BENCHMARK_PATH=src/server/benchmarks/types/brickcolor
 sh scripts/workflow/benchmark/init.sh "$RELEASE_VERSION"
 
-BENCHMARK_PATH=src/server/benchmarks/types/color3
-export BENCHMARK_PATH
+export BENCHMARK_PATH=src/server/benchmarks/types/color3
 sh scripts/workflow/benchmark/init.sh "$RELEASE_VERSION"
 
-BENCHMARK_PATH=src/server/benchmarks/types/rect
-export BENCHMARK_PATH
+export BENCHMARK_PATH=src/server/benchmarks/types/rect
 sh scripts/workflow/benchmark/init.sh "$RELEASE_VERSION"
 
-BENCHMARK_PATH=src/server/benchmarks/types/vector2
-export BENCHMARK_PATH
+export BENCHMARK_PATH=src/server/benchmarks/types/vector2
 sh scripts/workflow/benchmark/init.sh "$RELEASE_VERSION"
 
-BENCHMARK_PATH=src/server/benchmarks/types/vector3
-export BENCHMARK_PATH
+export BENCHMARK_PATH=src/server/benchmarks/types/vector3
 sh scripts/workflow/benchmark/init.sh "$RELEASE_VERSION"
 
-BENCHMARK_PATH=src/server/benchmarks/luau/function
-export BENCHMARK_PATH
+export BENCHMARK_PATH=src/server/benchmarks/luau/function
 sh scripts/workflow/benchmark/init.sh "$RELEASE_VERSION"
 
-BENCHMARK_PATH=src/server/benchmarks/luau/loop
-export BENCHMARK_PATH
+export BENCHMARK_PATH=src/server/benchmarks/luau/loop
 sh scripts/workflow/benchmark/init.sh "$RELEASE_VERSION"
 
-BENCHMARK_PATH=src/server/benchmarks/luau/math
-export BENCHMARK_PATH
+export BENCHMARK_PATH=src/server/benchmarks/luau/math
 sh scripts/workflow/benchmark/init.sh "$RELEASE_VERSION"
 
-BENCHMARK_PATH=src/server/benchmarks/luau/table
-export BENCHMARK_PATH
+export BENCHMARK_PATH=src/server/benchmarks/luau/table
 sh scripts/workflow/benchmark/init.sh "$RELEASE_VERSION"
 
-BENCHMARK_PATH=src/server/benchmarks/luau/tostring
-export BENCHMARK_PATH
+export BENCHMARK_PATH=src/server/benchmarks/luau/tostring
 sh scripts/workflow/benchmark/init.sh "$RELEASE_VERSION"
 
-BENCHMARK_PATH=src/server/benchmarks/luau/type
-export BENCHMARK_PATH
+export BENCHMARK_PATH=src/server/benchmarks/luau/type
 sh scripts/workflow/benchmark/init.sh "$RELEASE_VERSION"
 
-BENCHMARK_PATH=src/server/benchmarks/luau/var
-export BENCHMARK_PATH
+export BENCHMARK_PATH=src/server/benchmarks/luau/var
 sh scripts/workflow/benchmark/init.sh "$RELEASE_VERSION"

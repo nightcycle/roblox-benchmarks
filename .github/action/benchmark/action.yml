@@ -9,9 +9,33 @@ inputs:
   place-id:
     description: The ID of the place to run the benchmark in.
     default: "111123068113322"
-  api-key:
-    description: The API key to authenticate with the Roblox API.
+  rbx-api-key:
+    description: The  API key to authenticate with the Roblox API.
     required: true
-  benchmark:
-    description: the benchmarks you wish to run
-    default: "src/server/benchmarks"
+  data-release-version:
+    description: the version of the data being uploaded
+    required: true
+
+runs:
+  using: "composite"
+  steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 1
+
+    - name: Setup Rokit
+      uses: CompeyDev/setup-rokit@v0.1.2
+      with:
+        cache: true
+
+    - name: Install jq
+      uses: dcarbone/install-jq-action@v2.1.0
+      with:
+        version: 'latest'
+
+    - name: Run shell script
+      shell: bash
+      run: |
+        export RBX_API_KEY=${{ inputs.rbx-api-key }}
+        sh scripts/workflow/benchmark/all.sh ${{ inputs.data-release-version }}

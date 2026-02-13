@@ -1,0 +1,18 @@
+name: Dispatch Benchmark
+
+on:
+  workflow_dispatch:
+    inputs:
+      data-release-version:
+        description: 'the release version for the data'
+        required: true
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - name: Call Benchmark Action
+        uses: ./.github/actions/benchmark
+        with:
+          data-release-version: ${{ github.event.inputs.data-release-version }}
+          rbx-api-key: ${{ secrets.RBX_API_KEY }}
