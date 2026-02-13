@@ -65,7 +65,7 @@ BRANCH_NAME="release/$BRANCH_NAME_ENDING"
 # check if branch exists
 set +e
 git fetch origin "$BRANCH_NAME"
-git checkout -b "$BRANCH_NAME"
+git checkout -b "$BRANCH_NAME" "origin/$BRANCH_NAME"
 set -e
 git fetch origin "$BRANCH_NAME"
 git checkout "$BRANCH_NAME"

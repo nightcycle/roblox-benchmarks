@@ -7,8 +7,13 @@ BRANCH_NAME_ENDING=$(printf '%s' "$RELEASE_VERSION" | tr '.' '-')
 BRANCH_NAME="release/$BRANCH_NAME_ENDING"
 DATA_SUBMODULE_PATH="data"
 cd "$DATA_SUBMODULE_PATH"
+set +e
+git fetch origin "$BRANCH_NAME"
+git checkout -b "$BRANCH_NAME" "origin/$BRANCH_NAME"
+set -e
 git fetch origin "$BRANCH_NAME"
 git checkout "$BRANCH_NAME"
+cd ..
 git pull origin "$BRANCH_NAME"
 git submodule update --init --recursive
 git rm -r src/
