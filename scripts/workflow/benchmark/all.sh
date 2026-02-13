@@ -2,8 +2,9 @@
 set -e
 RELEASE_VERSION="${1:?'arg 1, RELEASE_VERSION, is not set'}"
 
-# saving the results
+# remove old data
 DATA_SUBMODULE_PATH="data"
+git submodule update --init --recursive
 cd "$DATA_SUBMODULE_PATH"
 git rm -r src/
 git commit -m "reset data"
