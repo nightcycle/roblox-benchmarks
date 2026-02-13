@@ -71,9 +71,11 @@ sh scripts/workflow/benchmark/process-data.sh
 echo "finished processing benchmark results"
 rm -f "$RAW_RESULTS_FILE"
 
+echo "opening data submodule"
 # # commit and push the results
 cd $DATA_SUBMODULE_PATH
 # git add all files under src
+echo "committing data changes"
 git add src/
 git commit -m "benchmark data generated from '$BENCHMARK_PATH' for release '$DATA_RELEASE_VERSION'"
 git push origin "$BRANCH_NAME"
