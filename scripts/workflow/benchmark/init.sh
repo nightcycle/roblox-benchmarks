@@ -81,7 +81,6 @@ echo "opening data submodule"
 cd $DATA_SUBMODULE_PATH
 # git add all files under src
 echo "committing data changes"
-git pull origin "$BRANCH_NAME"
 git add src/
 git commit -m "benchmark data generated from '$BENCHMARK_PATH' for release '$DATA_RELEASE_VERSION'"
 git push origin "$BRANCH_NAME"

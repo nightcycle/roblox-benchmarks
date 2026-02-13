@@ -2,25 +2,6 @@
 set -e
 RELEASE_VERSION="${1:?'arg 1, RELEASE_VERSION, is not set'}"
 
-# remove old data
-BRANCH_NAME_ENDING=$(printf '%s' "$RELEASE_VERSION" | tr '.' '-')
-BRANCH_NAME="release/$BRANCH_NAME_ENDING"
-DATA_SUBMODULE_PATH="data"
-cd "$DATA_SUBMODULE_PATH"
-set +e
-git fetch origin
-git checkout -b "$BRANCH_NAME"
-set -e
-git fetch origin
-git checkout "$BRANCH_NAME"
-cd ..
-git pull origin "$BRANCH_NAME"
-git submodule update --init --recursive
-git rm -r src/
-git commit -m "reset data"
-git push origin "$BRANCH_NAME"
-cd ..
-
 # export BENCHMARK_PATH=src/server/benchmarks/types/brickcolor
 # sh scripts/workflow/benchmark/init.sh "$RELEASE_VERSION"
 
