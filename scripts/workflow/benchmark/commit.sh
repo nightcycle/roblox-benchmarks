@@ -11,15 +11,19 @@ echo "Using data submodule: $DATA_SUBMODULE_PATH"
 : "${DATA_DIR_PATH:?'arg 1, DATA_DIR_PATH, is not set'}"
 echo "Using data directory: $DATA_DIR_PATH"
 
-: "${1:=benchmark data generated from \"${BENCHMARK_PATH}\" for release \"${DATA_RELEASE_VERSION}\"}"
-echo "Using commit message: $1"
+if [ -z "$1" ]; then
+	COMMIT_MESSAGE="benchmark data generated from '$BENCHMARK_PATH' for release '$DATA_RELEASE_VERSION'"
+else
+	COMMIT_MESSAGE="$1"
+fi
+echo "Using commit message: $COMMIT_MESSAGE"
 
 # # commit and push the results
 cd "$DATA_SUBMODULE_PATH"
 
 # git add all files under DATA_DIR_PATH
 git add "$DATA_DIR_PATH/"
-git commit -m "$1"
+git commit -m "$COMMIT_MESSAGE"
 git push origin HEAD:"${BRANCH_NAME}"
 
 cd ..
