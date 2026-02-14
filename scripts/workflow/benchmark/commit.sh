@@ -20,6 +20,6 @@ cd "$DATA_SUBMODULE_PATH"
 # git add all files under DATA_DIR_PATH
 git add "$DATA_DIR_PATH/"
 git commit -m "$1"
-git push origin
+git push origin HEAD:"${BRANCH_NAME}"
 
 cd ..
