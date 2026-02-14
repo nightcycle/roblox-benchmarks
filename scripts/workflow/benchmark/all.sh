@@ -1,15 +1,17 @@
 #!/bin/sh
 set -e
-RELEASE_VERSION="${1:?'arg 1, RELEASE_VERSION, is not set'}"
+DATA_RELEASE_VERSION="${1:?'arg 1, DATA_RELEASE_VERSION, is not set'}"
+
+sh scripts/workflow/benchmark/reset.sh
 
 # export BENCHMARK_PATH=src/server/benchmarks/types/brickcolor
 # sh scripts/workflow/benchmark/init.sh "$RELEASE_VERSION"
 
-export BENCHMARK_PATH=src/server/benchmarks/types/color3
-sh scripts/workflow/benchmark/init.sh "$RELEASE_VERSION"
-
-# export BENCHMARK_PATH=src/server/benchmarks/types/rect
+# export BENCHMARK_PATH=src/server/benchmarks/types/color3
 # sh scripts/workflow/benchmark/init.sh "$RELEASE_VERSION"
+
+export BENCHMARK_PATH=src/server/benchmarks/types/rect
+sh scripts/workflow/benchmark/init.sh "$DATA_RELEASE_VERSION"
 
 # export BENCHMARK_PATH=src/server/benchmarks/types/vector2
 # sh scripts/workflow/benchmark/init.sh "$RELEASE_VERSION"

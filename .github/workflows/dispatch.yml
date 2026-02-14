@@ -22,3 +22,5 @@ jobs:
           data-release-version: ${{ github.event.inputs.data-release-version }}
           rbx-api-key: ${{ secrets.RBX_API_KEY }}
           data-update-token: ${{ secrets.DATA_UPDATE_TOKEN }}
+          data-submodule-path: ${{ vars.DATA_SUBMODULE_PATH }}
+          data-dir-path: ${{ vars.DATA_DIR_PATH }}

@@ -2,11 +2,19 @@
 set -e
 echo "Running benchmark"
 
-# initialize git submodules
-git submodule update --init --recursive
+DATA_SUBMODULE_PATH="${1:?'arg 1, DATA_SUBMODULE_PATH, is not set'}"
+echo "Using data submodule: $DATA_SUBMODULE_PATH"
+
+DATA_DIR_PATH="${1:?'arg 1, DATA_DIR_PATH, is not set'}"
+echo "Using data directory: $DATA_DIR_PATH"
 
 DATA_RELEASE_VERSION="${1:?'arg 1, DATA_RELEASE_VERSION, is not set'}"
 echo "Using data release version: $DATA_RELEASE_VERSION"
+
+BRANCH_NAME_ENDING=$(printf '%s' "$DATA_RELEASE_VERSION" | tr '.' '-')
+BRANCH_NAME="release/$BRANCH_NAME_ENDING"
+export BRANCH_NAME="$BRANCH_NAME"
+sh scripts/workflow/benchmark/pull.sh
 
 : "${BENCHMARK_PATH:?'arg 1, BENCHMARK_PATH, is not set'}"
 export BENCHMARK_PATH
@@ -41,25 +49,21 @@ PLACE_VERSION=$(sh scripts/workflow/benchmark/publish.sh | tail -n 1)
 export PLACE_VERSION
 echo "Place version: $PLACE_VERSION"
 
-# saving the results
-DATA_SUBMODULE_PATH="data"
-DATA_DIR_PATH="$DATA_SUBMODULE_PATH/src"
-export DATA_DIR_PATH
-
 # if DATA_DIR_PATH doesn't exist, create it
+cd "$DATA_SUBMODULE_PATH"
 if [ ! -d "$DATA_DIR_PATH" ]; then
 	mkdir -p "$DATA_DIR_PATH"
 fi
-
+cd ..
 # RAW_RESULTS_FILE=$(mktemp)
-RAW_RESULTS_FILE="$DATA_DIR_PATH/raw.json"
+RAW_RESULTS_FILE="$DATA_SUBMODULE_PATH/$DATA_DIR_PATH/raw.json"
 export RAW_RESULTS_FILE
 
 echo "executing benchmark..."
 sh scripts/workflow/benchmark/run.sh "$BENCHMARK_PATH"
 echo "benchmark completed"
 
-cd $DATA_SUBMODULE_PATH
+cd "$DATA_SUBMODULE_PATH"
 BRANCH_NAME_ENDING=$(printf '%s' "$DATA_RELEASE_VERSION" | tr '.' '-')
 BRANCH_NAME="release/$BRANCH_NAME_ENDING"
 # check if branch exists
@@ -76,16 +80,8 @@ sh scripts/workflow/benchmark/process-data.sh
 echo "finished processing benchmark results"
 rm -f "$RAW_RESULTS_FILE"
 
-echo "opening data submodule"
-# # commit and push the results
-cd $DATA_SUBMODULE_PATH
-# git add all files under src
-echo "committing data changes"
-git add src/
-git commit -m "benchmark data generated from '$BENCHMARK_PATH' for release '$DATA_RELEASE_VERSION'"
-git push origin "$BRANCH_NAME"
-echo "benchmark results committed and pushed to branch: $BRANCH_NAME"
-cd ..
+sh scripts/workflow/benchmark/commit.sh
 
+echo "opening data submodule"
 echo "benchmark workflow completed successfully."
 exit 0

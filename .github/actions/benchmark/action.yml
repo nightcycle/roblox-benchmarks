@@ -18,7 +18,12 @@ inputs:
   data-update-token:
     description: the token used to update the data submodule with the new benchmark results
     required: true
-
+  data-submodule-path:
+    description: the path to the data submodule relative to the root of the repository
+    required: true
+  data-dir-path:
+    description: the path within the data submodule to upload the benchmark results to
+    required: true
 runs:
   using: "composite"
   steps:
@@ -55,4 +60,6 @@ runs:
       shell: bash
       run: |
         export RBX_API_KEY=${{ inputs.rbx-api-key }}
+        export DATA_SUBMODULE_PATH=${{ inputs.data-submodule-path }}
+        export DATA_DIR_PATH=${{ inputs.data-dir-path }}
         sh scripts/workflow/benchmark/all.sh ${{ inputs.data-release-version }}

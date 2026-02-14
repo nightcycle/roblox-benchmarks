@@ -14,7 +14,7 @@ echo "Using place version: $PLACE_VERSION"
 echo "Using script path: $SCRIPT_PATH"
 SCRIPT_CONTENTS=$(cat "$SCRIPT_PATH")
 # append "_G.FILTER_PATH='$BENCHMARK_PATH' to the top of $SCRIPT_CONTENTS"
-SCRIPT_CONTENTS="_G.FILTER_PATH='${BENCHMARK_PATH}';_G.DATA_DIR='${DATA_DIR_PATH}';_G.IS_DEBUG=false;${SCRIPT_CONTENTS}"
+SCRIPT_CONTENTS="_G.FILTER_PATH='${BENCHMARK_PATH}';_G.DATA_DIR='${DATA_SUBMODULE_PATH}/${DATA_DIR_PATH}';_G.IS_DEBUG=false;${SCRIPT_CONTENTS}"
 # echo "Using script contents:"
 # echo "------------------------"
 # echo "$SCRIPT_CONTENTS"

@@ -38,9 +38,6 @@ function Util.saveCSV(path: string, content: string)
 		if not FileUtil.Path.getIfExists(parentDir) then
 			FileUtil.makeDirectories(parentDir)
 		end
-		if FileUtil.Path.getIfExists(filePath) then
-			FileUtil.remove(filePath)
-		end
 		FileUtil.write(filePath, content)
 	else
 		ENV.AGENT_OUTPUT.raw[path] = content
