@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 DATA_RELEASE_VERSION="${1:?'arg 1, DATA_RELEASE_VERSION, is not set'}"
-
+export DATA_RELEASE_VERSION="$DATA_RELEASE_VERSION"
 sh scripts/workflow/benchmark/reset.sh
 
 # export BENCHMARK_PATH=src/server/benchmarks/types/brickcolor
