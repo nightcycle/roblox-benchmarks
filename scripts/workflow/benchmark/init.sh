@@ -2,14 +2,14 @@
 set -e
 echo "Running benchmark"
 
-DATA_SUBMODULE_PATH="${1:?'arg 1, DATA_SUBMODULE_PATH, is not set'}"
+: "${DATA_RELEASE_VERSION:?'arg 1, DATA_RELEASE_VERSION, is not set'}"
+echo "Using data release version: $DATA_RELEASE_VERSION"
+
+: "${DATA_SUBMODULE_PATH:?'arg 1, DATA_SUBMODULE_PATH, is not set'}"
 echo "Using data submodule: $DATA_SUBMODULE_PATH"
 
-DATA_DIR_PATH="${1:?'arg 1, DATA_DIR_PATH, is not set'}"
+: "${DATA_DIR_PATH:?'arg 1, DATA_DIR_PATH, is not set'}"
 echo "Using data directory: $DATA_DIR_PATH"
-
-DATA_RELEASE_VERSION="${1:?'arg 1, DATA_RELEASE_VERSION, is not set'}"
-echo "Using data release version: $DATA_RELEASE_VERSION"
 
 BRANCH_NAME_ENDING=$(printf '%s' "$DATA_RELEASE_VERSION" | tr '.' '-')
 BRANCH_NAME="release/$BRANCH_NAME_ENDING"
