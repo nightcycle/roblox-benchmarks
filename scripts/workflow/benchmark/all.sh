@@ -31,7 +31,19 @@ sh scripts/workflow/benchmark/init.sh "$RELEASE_VERSION"
 export BENCHMARK_PATH=src/server/benchmarks/luau/loop
 sh scripts/workflow/benchmark/init.sh "$RELEASE_VERSION"
 
-export BENCHMARK_PATH=src/server/benchmarks/luau/math
+export BENCHMARK_PATH=src/server/benchmarks/luau/math/constrain
+sh scripts/workflow/benchmark/init.sh "$RELEASE_VERSION"
+
+export BENCHMARK_PATH=src/server/benchmarks/luau/math/noise
+sh scripts/workflow/benchmark/init.sh "$RELEASE_VERSION"
+
+export BENCHMARK_PATH=src/server/benchmarks/luau/math/operations
+sh scripts/workflow/benchmark/init.sh "$RELEASE_VERSION"
+
+export BENCHMARK_PATH=src/server/benchmarks/luau/math/rounding
+sh scripts/workflow/benchmark/init.sh "$RELEASE_VERSION"
+
+export BENCHMARK_PATH=src/server/benchmarks/luau/math/sqrt
 sh scripts/workflow/benchmark/init.sh "$RELEASE_VERSION"
 
 export BENCHMARK_PATH=src/server/benchmarks/luau/table

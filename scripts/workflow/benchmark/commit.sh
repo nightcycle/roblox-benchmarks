@@ -22,7 +22,7 @@ echo "Using commit message: $COMMIT_MESSAGE"
 cd "$DATA_SUBMODULE_PATH"
 
 # git add all files under DATA_DIR_PATH
-git add "$DATA_DIR_PATH/"
+git add -A "$DATA_DIR_PATH"
 git commit -m "$COMMIT_MESSAGE"
 git push origin HEAD:"${BRANCH_NAME}"
 
