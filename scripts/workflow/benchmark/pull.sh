@@ -15,11 +15,19 @@ echo "Using data submodule: $DATA_SUBMODULE_PATH"
 echo "Using data directory: $DATA_DIR_PATH"
 
 cd "$DATA_SUBMODULE_PATH"
+echo "Checking out ${BRANCH_NAME}"
 git checkout main
+echo "Pulling latest changes from main and ${BRANCH_NAME}"
 git pull origin main
+echo "Pulling latest changes from ${BRANCH_NAME}"
 git pull origin "$BRANCH_NAME" || {
+	echo "Branch ${BRANCH_NAME} does not exist, creating it"
 	git checkout -b "$BRANCH_NAME"
+	echo "Pushing ${BRANCH_NAME} to origin"
 	git push -u origin "$BRANCH_NAME"
+	echo "Finished setting up ${BRANCH_NAME}"
 }
+echo "Finished pulling benchmark data"
 git checkout "$BRANCH_NAME"
+echo "Finished setting up ${BRANCH_NAME}"
 cd ..
