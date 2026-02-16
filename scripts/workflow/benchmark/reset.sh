@@ -12,7 +12,8 @@ cd "$DATA_SUBMODULE_PATH"
 if [ ! -d "$DATA_DIR_PATH" ]; then
 	exit 0
 fi
-rm -rf "${DATA_DIR_PATH:?}/"
+git rm -rf "${DATA_DIR_PATH:?}/"
 git commit -m "resetting ${DATA_SUBMODULE_PATH}"
 git push origin HEAD:"${BRANCH_NAME}"
 cd ..
+echo "Finished resetting benchmark data"
