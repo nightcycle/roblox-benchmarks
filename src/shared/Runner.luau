@@ -137,7 +137,13 @@ function Runner.new(target: ModuleScript): Runner
 				data[sample] = run(table.unpack(params :: any, 1, #benchmark.Parameters))
 			end
 			Logger.log(`\tsolve - summarizing {target:GetFullName()}`)
-
+			for i, v in sampleParameters do
+				if typeof(v) == "Instance" then
+					pcall(function(...)
+						v:Destroy()
+					end)
+				end
+			end
 			do
 				local min = math.huge
 				local max = -math.huge
