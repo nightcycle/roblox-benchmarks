@@ -62,4 +62,5 @@ runs:
         export RBX_API_KEY=${{ inputs.rbx-api-key }}
         export DATA_SUBMODULE_PATH=${{ inputs.data-submodule-path }}
         export DATA_DIR_PATH=${{ inputs.data-dir-path }}
+        export GH_TOKEN=${{ inputs.data-update-token }}
         sh scripts/workflow/benchmark/all.sh ${{ inputs.data-release-version }}
