@@ -15,6 +15,9 @@ echo "Using data submodule: $DATA_SUBMODULE_PATH"
 echo "Using data directory: $DATA_DIR_PATH"
 
 cd "$DATA_SUBMODULE_PATH"
-git pull origin "$BRANCH_NAME"
-git checkout "$BRANCH_NAME" || git checkout -b "$BRANCH_NAME"
+git pull origin "$BRANCH_NAME" || {
+	git checkout -b "$BRANCH_NAME"
+	git push -u origin "$BRANCH_NAME"
+}
+git checkout "$BRANCH_NAME"
 cd ..
