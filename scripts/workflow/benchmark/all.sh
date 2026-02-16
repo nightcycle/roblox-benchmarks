@@ -7,6 +7,13 @@ BRANCH_NAME_ENDING=$(printf '%s' "$DATA_RELEASE_VERSION" | tr '.' '-')
 BRANCH_NAME="release/$BRANCH_NAME_ENDING"
 
 export BRANCH_NAME="$BRANCH_NAME"
+
+cd "$DATA_SUBMODULE_PATH"
+if git ls-remote --exit-code --heads origin "$BRANCH_NAME" >/dev/null 2>&1; then
+  git push origin --delete "$BRANCH_NAME"
+fi
+cd ..
+
 sh scripts/workflow/benchmark/pull.sh
 sh scripts/workflow/benchmark/reset.sh
 
