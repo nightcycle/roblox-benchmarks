@@ -42,3 +42,4 @@ long term:
 - create a progress dashboard aiming for the benchmarking of every luau and engine API
 - a tool that analyzes a codeblock and estimates runtime from recognized patterns
 - darklua style cli tool that applies known optimizations (maybe just a fork? not sure)
+
