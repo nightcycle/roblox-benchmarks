@@ -17,7 +17,7 @@ return Benchmark.new(
 		TAGS.FINDINGS.MATH_SQRT_IS_SLOW,
 	},
 	{
-		Benchmark.Parameter.Float.new("value"),
+		Benchmark.Parameter.Float.new("value", 0.01),
 	},
 	function(value: number)
 		return math.sqrt(value)
