@@ -20,6 +20,6 @@ return Benchmark.new(
 	function()
 		return Vector3.new()
 	end :: any,
-	150_000,
+	100_000,
 	1_000
 )
