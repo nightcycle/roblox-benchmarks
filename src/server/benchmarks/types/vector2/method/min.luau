@@ -24,6 +24,6 @@ return Benchmark.new(
 	function(a: Vector2, b: Vector2)
 		return a:Min(b)
 	end :: any,
-	150_000,
+	100_000,
 	1_000
 )

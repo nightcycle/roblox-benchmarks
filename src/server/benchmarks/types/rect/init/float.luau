@@ -26,6 +26,6 @@ return Benchmark.new(
 	function(minX: number, minY: number, maxX: number, maxY: number)
 		return Rect.new(minX, minY, maxX, maxY)
 	end :: any,
-	150_000,
+	100_000,
 	1_000
 )

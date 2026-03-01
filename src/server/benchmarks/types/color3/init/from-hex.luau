@@ -21,6 +21,6 @@ return Benchmark.new(
 	function(hex: string)
 		return Color3.fromHex(hex)
 	end :: any,
-	150_000,
+	100_000,
 	1_000
 )
