@@ -21,6 +21,6 @@ return Benchmark.new(
 	function(a: number)
 		return `{a}`
 	end :: any,
-	100_000,
+	50_000,
 	1_000
 )
