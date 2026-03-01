@@ -25,6 +25,6 @@ return Benchmark.new(
 	function(array: { number }, index: number)
 		return array[index]
 	end :: any,
-	50_000,
-	2_000
+	150_000,
+	1_000
 )

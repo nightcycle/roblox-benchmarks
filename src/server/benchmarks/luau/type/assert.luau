@@ -17,6 +17,6 @@ return Benchmark.new(
 	function(a: number)
 		assert(a ~= 0, "a must not be zero")
 	end :: any,
-	50_000,
-	2_000
+	150_000,
+	1_000
 )

@@ -24,6 +24,6 @@ return Benchmark.new(
 	function(a: Vector3, b: Vector3)
 		return a:Max(b)
 	end :: any,
-	50_000,
-	2_000
+	150_000,
+	1_000
 )

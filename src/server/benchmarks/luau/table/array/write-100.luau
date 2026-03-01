@@ -28,6 +28,6 @@ return Benchmark.new(
 		array[index] = value
 		return
 	end :: any,
-	50_000,
-	2_000
+	150_000,
+	1_000
 )

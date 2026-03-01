@@ -27,6 +27,6 @@ return Benchmark.new(
 		t[2] = b
 		t[3] = c
 	end :: any,
-	50_000,
-	2_000
+	150_000,
+	1_000
 )

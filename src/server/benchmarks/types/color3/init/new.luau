@@ -24,6 +24,6 @@ return Benchmark.new(
 	function(r: number, g: number, b: number)
 		return Color3.new(r, g, b)
 	end :: any,
-	50_000,
-	2_000
+	150_000,
+	1_000
 )

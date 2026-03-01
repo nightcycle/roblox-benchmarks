@@ -23,6 +23,6 @@ return Benchmark.new(
 	function(a: Vector2, b: Vector2)
 		return a:Dot(b)
 	end :: any,
-	50_000,
-	2_000
+	150_000,
+	1_000
 )
