@@ -111,7 +111,7 @@ function Runner.new(target: ModuleScript): Runner
 				minElapsed = stopTime - startTime
 			end
 			local baseline = math.round(minElapsed * 1_000_000_000_000 / benchmark.Repeats)
-			local serverSpeed = math.round(1000 * baseline / (4_000 * 1.0118)) / 1000
+			local serverSpeed = math.round(1000 * baseline / (4_000 * 1.0118 * 1.03395)) / 1000
 			local function run(...: any): Sample
 				local startTime = os.clock()
 				for repeatIndex = 1, benchmark.Repeats do
