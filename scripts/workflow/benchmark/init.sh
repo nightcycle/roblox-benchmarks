@@ -14,7 +14,10 @@ echo "Using data directory: $DATA_DIR_PATH"
 BRANCH_NAME_ENDING=$(printf '%s' "$DATA_RELEASE_VERSION" | tr '.' '-')
 BRANCH_NAME="release/$BRANCH_NAME_ENDING"
 export BRANCH_NAME="$BRANCH_NAME"
-sh scripts/workflow/benchmark/pull.sh
+
+if [ -z "$NO_GIT" ]; then
+	sh scripts/workflow/benchmark/pull.sh
+fi
 
 : "${BENCHMARK_PATH:?'arg 1, BENCHMARK_PATH, is not set'}"
 export BENCHMARK_PATH
@@ -66,22 +69,25 @@ echo "benchmark completed"
 cd "$DATA_SUBMODULE_PATH"
 BRANCH_NAME_ENDING=$(printf '%s' "$DATA_RELEASE_VERSION" | tr '.' '-')
 BRANCH_NAME="release/$BRANCH_NAME_ENDING"
-# check if branch exists
-set +e
-git fetch origin
-git checkout -b "$BRANCH_NAME"
-set -e
-git fetch origin
-git checkout "$BRANCH_NAME"
-cd ..
+if [ -z "$NO_GIT" ]; then
+	set +e
+	git fetch origin
+	git checkout -b "$BRANCH_NAME"
+	set -e
+	git fetch origin
+	git checkout "$BRANCH_NAME"
+	cd ..
+else
+	cd ..
+fi
 
 echo "processing benchmark results..."
 sh scripts/workflow/benchmark/process-data.sh
 echo "finished processing benchmark results"
 rm -f "$RAW_RESULTS_FILE"
-
-sh scripts/workflow/benchmark/commit.sh
-
+if [ -z "$NO_GIT" ]; then
+	sh scripts/workflow/benchmark/commit.sh
+fi
 echo "opening data submodule"
 echo "benchmark workflow completed successfully."
 exit 0

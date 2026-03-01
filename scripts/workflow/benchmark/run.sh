@@ -59,7 +59,7 @@ while [ "$TASK_STATE" = "PROCESSING" ]; do #&& [ $ATTEMPTS -lt $TIMEOUT ]; do
 done
 
 if [ "$TASK_STATE" != "COMPLETE" ]; then
-	echo "task failed"
+	echo "task failed: $TASK_RESPONSE"
 	LOGS_RESPONSE=$(rbxcloud luau get-logs \
 		-u "$UNIVERSE_ID" \
 		-i "$PLACE_ID" \

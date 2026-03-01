@@ -1,7 +1,6 @@
 #!/bin/sh
 set -e
 
-
 if [ ! -d "$DATA_SUBMODULE_PATH/$DATA_DIR_PATH" ]; then
 	mkdir -p "$DATA_SUBMODULE_PATH/$DATA_DIR_PATH"
 fi
@@ -23,6 +22,7 @@ done
 
 # if summary.csv exists, skip the first line when appending
 if [ -f "${DATA_SUBMODULE_PATH}/${DATA_DIR_PATH}/summary.csv" ]; then
+    echo "summary.csv already exists, appending summary content while skipping the first line"
     # skip the first newline
     SUMMARY_CONTENT=$(jq -r '.output.results[0].data.summary' "$RAW_RESULTS_FILE" | tail -n +2)
     # remove leading newline
@@ -32,5 +32,6 @@ if [ -f "${DATA_SUBMODULE_PATH}/${DATA_DIR_PATH}/summary.csv" ]; then
     echo ""
     printf '%s\n' "$SUMMARY_CONTENT" >> "${DATA_SUBMODULE_PATH}/${DATA_DIR_PATH}/summary.csv"
 else
+    echo "summary.csv does not exist, creating new summary.csv with content"
     jq -r '.output.results[0].data.summary' "$RAW_RESULTS_FILE" > "${DATA_SUBMODULE_PATH}/${DATA_DIR_PATH}/summary.csv"
 fi

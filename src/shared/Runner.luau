@@ -36,7 +36,7 @@ export type Runner = {
 local CONSTANTS = require(game.ReplicatedStorage.Shared.CONSTANTS)
 local SUMMARY_PATH = "summary.csv"
 local SUMMARY_CSV_HEADER =
-	"bench.path,bench.duration,bench.samples,bench.repeats,stats.mean,stats.stddev,stats.p10,stats.p50,stats.p90,stats.min,stats.max,tags"
+	"bench.path,bench.duration,bench.samples,bench.repeats,runner.speed,runner.baseline,stats.mean,stats.stddev,stats.p10,stats.p50,stats.p90,stats.min,stats.max,tags"
 -- Variables
 -- References
 -- Private Functions
@@ -100,22 +100,25 @@ function Runner.new(target: ModuleScript): Runner
 				sampleParameters[sample] = benchmark:generate(rng)
 			end
 			table.freeze(sampleParameters)
-			local function run(...: any): Sample
-				local minElapsed = 0
-				do
-					local startTime = os.clock()
-					for repeatIndex = 1, benchmark.Repeats do
-						-- empty run
-					end
-					local stopTime = os.clock()
-					minElapsed = stopTime - startTime
+			task.wait()
+			local minElapsed = 0
+			do
+				local startTime = os.clock()
+				for repeatIndex = 1, benchmark.Repeats do
+					-- empty run
 				end
+				local stopTime = os.clock()
+				minElapsed = stopTime - startTime
+			end
+			local baseline = math.round(minElapsed * 1_000_000_000_000 / benchmark.Repeats)
+			local serverSpeed = math.round(1000 * baseline / (4_000 * 1.0118)) / 1000
+			local function run(...: any): Sample
 				local startTime = os.clock()
 				for repeatIndex = 1, benchmark.Repeats do
 					benchmark.Method(...)
 				end
 				local stopTime = os.clock()
-				local elapsed = stopTime - startTime - minElapsed
+				local elapsed = (stopTime - startTime - minElapsed) / serverSpeed
 				assert(
 					elapsed > 0,
 					`target "{self.Target:GetFullName()}" ran in 0 or less time ({elapsed} s), increase the number of repeats for such a low-level benchmark`
@@ -130,9 +133,6 @@ function Runner.new(target: ModuleScript): Runner
 			local count = benchmark.Samples
 			Logger.log(`\tsolve - running {count} samples for {target:GetFullName()}`)
 			for sample = 1, count do
-				if sample % CONSTANTS.PAUSE_EVERY_N_SAMPLES == 0 then
-					task.wait()
-				end
 				local params = sampleParameters[sample]
 				data[sample] = run(table.unpack(params :: any, 1, #benchmark.Parameters))
 			end
@@ -204,6 +204,8 @@ function Runner.new(target: ModuleScript): Runner
 						P10 = math.ceil(p10),
 						P50 = math.ceil(p50),
 						P90 = math.ceil(p90),
+						ServerSpeed = serverSpeed,
+						Baseline = baseline,
 					},
 					toCSVRow = function(self: Summary): string
 						-- "bench.path,bench.start,bench.stop,bench.samples,bench.repeats,stats.min,stats.max,stats.mean,stats.stddev,stats.p10,stats.p50,stats.p90"
@@ -213,6 +215,8 @@ function Runner.new(target: ModuleScript): Runner
 							testStop - testStart,
 							benchmark.Samples,
 							benchmark.Repeats,
+							serverSpeed,
+							baseline,
 							math.ceil(mean),
 							math.ceil(standardDeviation),
 							math.ceil(p10),

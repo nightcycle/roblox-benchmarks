@@ -21,5 +21,5 @@ return Benchmark.new(
 		return BrickColor.Red()
 	end :: any,
 	100_000,
-	1_000
+	2_500
 )

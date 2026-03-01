@@ -13,7 +13,7 @@ local TAGS = require(game.ReplicatedStorage.Shared.TAGS)
 return Benchmark.new(
 	{
 		TAGS.OPERATIONS.READ,
-		TAGS.OPERATIONS.ASSIGN
+		TAGS.OPERATIONS.ASSIGN,
 	},
 	{
 		Benchmark.Parameter.Integer.new("a", 1),
@@ -26,5 +26,5 @@ return Benchmark.new(
 		local _3 = c
 	end :: any,
 	100_000,
-	1_000
+	2_500
 )

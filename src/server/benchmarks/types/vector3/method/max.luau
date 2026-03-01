@@ -25,5 +25,5 @@ return Benchmark.new(
 		return a:Max(b)
 	end :: any,
 	100_000,
-	1_000
+	2_500
 )

@@ -26,5 +26,5 @@ return Benchmark.new(
 		return a:FuzzyEq(b, epsilon)
 	end :: any,
 	100_000,
-	1_000
+	2_500
 )

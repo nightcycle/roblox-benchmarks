@@ -24,5 +24,5 @@ return Benchmark.new(
 		return Color3.fromHSV(h, s, v)
 	end :: any,
 	100_000,
-	1_000
+	2_500
 )

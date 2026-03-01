@@ -25,5 +25,5 @@ return Benchmark.new(
 		local _ = { _1 = a, _2 = b, _3 = c }
 	end :: any,
 	100_000,
-	1_000
+	2_500
 )

@@ -22,5 +22,5 @@ return Benchmark.new(
 		return Color3.fromHex(hex)
 	end :: any,
 	100_000,
-	1_000
+	2_500
 )
