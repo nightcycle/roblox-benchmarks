@@ -13,13 +13,15 @@ local DEFAULT_ENV = {
 	FILTER_PATH = "",
 	IS_DEBUG = true,
 	IS_FLAT = false,
+	RUNNER_INDEX = -1,
 	DATA_DIR = "data/src",
 	AGENT_OUTPUT = {
-		summary = "",
 		raw = {},
 	} :: {
-		summary: string,
-		raw: { [string]: string },
+		raw: { [string]: {
+			header: string,
+			rows: string,
+		} },
 	},
 }
 local out = setmetatable({}, {

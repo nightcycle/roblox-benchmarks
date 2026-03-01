@@ -26,26 +26,25 @@ function Util.newSession()
 			FileUtil.run(`rm -rf "{ENV.DATA_DIR}"`)
 		end
 	else
-		ENV.AGENT_OUTPUT.summary = ""
 		table.clear(ENV.AGENT_OUTPUT.raw)
 	end
 end
 
-function Util.saveCSV(path: string, content: string)
-	local filePath = getFinalPath(path)
-	if ENV.IS_DEBUG then
-		local parentDir = getParentDirectory(filePath)
-		if not FileUtil.Path.getIfExists(parentDir) then
-			FileUtil.makeDirectories(parentDir)
-		end
-		FileUtil.write(filePath, content)
-	else
-		ENV.AGENT_OUTPUT.raw[path] = content
-	end
-end
+-- function Util.saveCSV(path: string, content: string)
+-- 	local filePath = getFinalPath(path)
+-- 	if ENV.IS_DEBUG then
+-- 		local parentDir = getParentDirectory(filePath)
+-- 		if not FileUtil.Path.getIfExists(parentDir) then
+-- 			FileUtil.makeDirectories(parentDir)
+-- 		end
+-- 		FileUtil.write(filePath, content)
+-- 	else
+-- 		ENV.AGENT_OUTPUT.raw[path] = content
+-- 	end
+-- end
 
-function Util.appendCSV(path: string, row: string, header: string?)
-	row = "\n" .. row
+function Util.appendCSV(path: string, rows: string, header: string)
+	rows = "\n" .. rows
 	if ENV.IS_DEBUG then
 		local filePath = getFinalPath(path)
 		local parentDir = getParentDirectory(filePath)
@@ -55,12 +54,12 @@ function Util.appendCSV(path: string, row: string, header: string?)
 		if not FileUtil.Path.getIfExists(filePath) and header then
 			FileUtil.write(filePath, header)
 		end
-		FileUtil.append(filePath, row)
+		FileUtil.append(filePath, rows)
 	else
-		if ENV.AGENT_OUTPUT.summary == "" and header then
-			ENV.AGENT_OUTPUT.summary = header
-		end
-		ENV.AGENT_OUTPUT.summary ..= row
+		ENV.AGENT_OUTPUT.raw[path] = {
+			header = header,
+			rows = rows,
+		}
 	end
 end
 

@@ -16,22 +16,13 @@ jq -r '.output.results[0].data.raw | keys[]' "$RAW_RESULTS_FILE" | tr -d '\r' | 
         mkdir -p "$dir"
     fi
 
-    # Extract value directly from file
-    jq -r --arg k "$path" '.output.results[0].data.raw[$k]' "$RAW_RESULTS_FILE" > "${DATA_SUBMODULE_PATH}/${DATA_DIR_PATH}/${path}"
-done
+    # if file doesn't exist, create it and add header
+    if [ ! -f "${DATA_SUBMODULE_PATH}/${DATA_DIR_PATH}/${path}" ]; then
+        header=$(jq -r --arg k "$path" '.output.results[0].data.raw[$k].header' "$RAW_RESULTS_FILE")
+        echo "Creating file with header: $header"
+        echo "$header" > "${DATA_SUBMODULE_PATH}/${DATA_DIR_PATH}/${path}"
+    fi
 
-# if summary.csv exists, skip the first line when appending
-if [ -f "${DATA_SUBMODULE_PATH}/${DATA_DIR_PATH}/summary.csv" ]; then
-    echo "summary.csv already exists, appending summary content while skipping the first line"
-    # skip the first newline
-    SUMMARY_CONTENT=$(jq -r '.output.results[0].data.summary' "$RAW_RESULTS_FILE" | tail -n +2)
-    # remove leading newline
-    echo "summary content to append:"
-    echo ""
-    echo "$SUMMARY_CONTENT"
-    echo ""
-    printf '%s\n' "$SUMMARY_CONTENT" >> "${DATA_SUBMODULE_PATH}/${DATA_DIR_PATH}/summary.csv"
-else
-    echo "summary.csv does not exist, creating new summary.csv with content"
-    jq -r '.output.results[0].data.summary' "$RAW_RESULTS_FILE" > "${DATA_SUBMODULE_PATH}/${DATA_DIR_PATH}/summary.csv"
-fi
+    # Extract value directly from file
+    jq -r --arg k "$path" '.output.results[0].data.raw[$k].rows' "$RAW_RESULTS_FILE" > "${DATA_SUBMODULE_PATH}/${DATA_DIR_PATH}/${path}"
+done

@@ -55,11 +55,12 @@ return function()
 	for i, runModule in modules do
 		table.insert(runners, Runner.new(runModule))
 	end
-	SaveUtil.newSession()
+	if ENV.RUNNER_INDEX == 0 then
+		SaveUtil.newSession()
+	end
 	for i, runner in runners do
 		Logger.log(`\nrunning benchmark {i}/{#runners}`)
-		local summary = runner:solve(Random.new())
-		runner:save(summary, ENV.IS_FLAT)
+		runner:save(runner:solve(Random.new()), ENV.IS_FLAT)
 	end
 	Logger.log("benchmark run complete!\n")
 end

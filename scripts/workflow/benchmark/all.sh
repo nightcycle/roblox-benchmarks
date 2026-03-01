@@ -3,6 +3,9 @@ set -e
 DATA_RELEASE_VERSION="${1:?'arg 1, DATA_RELEASE_VERSION, is not set'}"
 export DATA_RELEASE_VERSION="$DATA_RELEASE_VERSION"
 
+RUN_INDEX="${2:?'arg 2, RUN_INDEX, is not set'}"
+export RUN_INDEX="$RUN_INDEX"
+
 BRANCH_NAME_ENDING=$(printf '%s' "$DATA_RELEASE_VERSION" | tr '.' '-')
 BRANCH_NAME="release/$BRANCH_NAME_ENDING"
 
