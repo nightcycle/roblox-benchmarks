@@ -23,6 +23,6 @@ return Benchmark.new(
 	function(x: number, y: number)
 		return math.noise(x, y)
 	end :: any,
-	150_000,
+	100_000,
 	1_000
 )

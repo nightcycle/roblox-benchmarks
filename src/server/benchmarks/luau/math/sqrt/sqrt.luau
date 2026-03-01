@@ -22,6 +22,6 @@ return Benchmark.new(
 	function(value: number)
 		return math.sqrt(value)
 	end :: any,
-	150_000,
+	100_000,
 	1_000
 )

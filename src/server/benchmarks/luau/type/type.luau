@@ -17,6 +17,6 @@ return Benchmark.new(
 	function(a: number)
 		local _ = type(a)
 	end :: any,
-	150_000,
+	100_000,
 	1_000
 )
