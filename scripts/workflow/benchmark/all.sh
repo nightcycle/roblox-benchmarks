@@ -26,7 +26,22 @@ sh scripts/workflow/benchmark/init.sh
 export BENCHMARK_PATH=src/server/benchmarks/luau/math/noise
 sh scripts/workflow/benchmark/init.sh
 
-export BENCHMARK_PATH=src/server/benchmarks/luau/math/operations
+export BENCHMARK_PATH=src/server/benchmarks/luau/math/operations/add
+sh scripts/workflow/benchmark/init.sh
+
+export BENCHMARK_PATH=src/server/benchmarks/luau/math/operations/bool
+sh scripts/workflow/benchmark/init.sh
+
+export BENCHMARK_PATH=src/server/benchmarks/luau/math/operations/divide
+sh scripts/workflow/benchmark/init.sh
+
+export BENCHMARK_PATH=src/server/benchmarks/luau/math/operations/mod
+sh scripts/workflow/benchmark/init.sh
+
+export BENCHMARK_PATH=src/server/benchmarks/luau/math/operations/multiply
+sh scripts/workflow/benchmark/init.sh
+
+export BENCHMARK_PATH=src/server/benchmarks/luau/math/operations/subtract
 sh scripts/workflow/benchmark/init.sh
 
 export BENCHMARK_PATH=src/server/benchmarks/luau/math/rounding
