@@ -20,6 +20,6 @@ return Benchmark.new(
 	function()
 		return BrickColor.random()
 	end :: any,
-	100_000,
+	50_000,
 	2_500
 )

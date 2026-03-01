@@ -19,6 +19,6 @@ return Benchmark.new(
 	function()
 		return Color3.new()
 	end :: any,
-	100_000,
+	50_000,
 	2_500
 )

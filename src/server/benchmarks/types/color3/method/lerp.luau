@@ -23,6 +23,6 @@ return Benchmark.new(
 	function(a: Color3, b: Color3, alpha: number)
 		return a:Lerp(b, alpha)
 	end :: any,
-	100_000,
+	50_000,
 	2_500
 )

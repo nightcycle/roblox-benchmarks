@@ -22,6 +22,6 @@ return Benchmark.new(
 	function(value: number)
 		return math.round(value)
 	end :: any,
-	100_000,
+	50_000,
 	2_500
 )

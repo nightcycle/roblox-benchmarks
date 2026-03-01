@@ -23,6 +23,6 @@ return Benchmark.new(
 	function(a: Vector2, b: Vector2)
 		return a - b
 	end :: any,
-	100_000,
+	50_000,
 	2_500
 )

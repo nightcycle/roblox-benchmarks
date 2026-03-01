@@ -25,6 +25,6 @@ return Benchmark.new(
 	function(a: number, b: number, c: number)
 		local _1, _2, _3 = a, b, c
 	end :: any,
-	100_000,
+	50_000,
 	2_500
 )

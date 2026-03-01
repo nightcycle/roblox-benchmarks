@@ -33,6 +33,6 @@ return Benchmark.new(
 			return v
 		end
 	end :: any,
-	100_000,
+	50_000,
 	2_500
 )

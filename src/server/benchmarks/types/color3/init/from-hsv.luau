@@ -23,6 +23,6 @@ return Benchmark.new(
 	function(h: number, s: number, v: number)
 		return Color3.fromHSV(h, s, v)
 	end :: any,
-	100_000,
+	50_000,
 	2_500
 )

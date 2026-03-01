@@ -22,6 +22,6 @@ return Benchmark.new(
 	function(a: Vector2)
 		return a:Floor()
 	end :: any,
-	100_000,
+	50_000,
 	2_500
 )

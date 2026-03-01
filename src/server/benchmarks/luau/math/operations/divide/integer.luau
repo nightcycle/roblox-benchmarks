@@ -25,6 +25,6 @@ return Benchmark.new(
 	function(a: number, b: number)
 		return a / b
 	end :: any,
-	100_000,
+	50_000,
 	2_500
 )

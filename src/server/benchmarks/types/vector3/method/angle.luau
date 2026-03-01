@@ -23,6 +23,6 @@ return Benchmark.new(
 	function(a: Vector3, b: Vector3, axis: Vector3)
 		return a:Angle(b, axis)
 	end :: any,
-	100_000,
+	50_000,
 	2_500
 )

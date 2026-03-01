@@ -20,6 +20,6 @@ return Benchmark.new(
 	function()
 		return BrickColor.Red()
 	end :: any,
-	100_000,
+	50_000,
 	2_500
 )
