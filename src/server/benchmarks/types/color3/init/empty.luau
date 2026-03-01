@@ -20,5 +20,5 @@ return Benchmark.new(
 		return Color3.new()
 	end :: any,
 	50_000,
-	2_500
+	2_000
 )

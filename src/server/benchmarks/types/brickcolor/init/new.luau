@@ -25,5 +25,5 @@ return Benchmark.new(
 		return BrickColor.new(r, g, b)
 	end :: any,
 	10_000,
-	2_500
+	2_000
 )

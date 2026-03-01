@@ -24,5 +24,5 @@ return Benchmark.new(
 		return a:Lerp(b, alpha)
 	end :: any,
 	50_000,
-	2_500
+	2_000
 )

@@ -22,5 +22,5 @@ return Benchmark.new(
 		return 1 + value - value % 1
 	end :: any,
 	50_000,
-	2_500
+	2_000
 )

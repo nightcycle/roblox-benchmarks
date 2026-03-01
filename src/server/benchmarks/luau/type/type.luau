@@ -18,5 +18,5 @@ return Benchmark.new(
 		local _ = type(a)
 	end :: any,
 	50_000,
-	2_500
+	2_000
 )

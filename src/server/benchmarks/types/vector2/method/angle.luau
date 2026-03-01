@@ -24,5 +24,5 @@ return Benchmark.new(
 		return a:Angle(b, isSigned)
 	end :: any,
 	50_000,
-	2_500
+	2_000
 )

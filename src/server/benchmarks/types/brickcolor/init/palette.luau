@@ -22,5 +22,5 @@ return Benchmark.new(
 		return BrickColor.palette(RED_VAL)
 	end :: any,
 	50_000,
-	2_500
+	2_000
 )

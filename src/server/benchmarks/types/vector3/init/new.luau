@@ -24,5 +24,5 @@ return Benchmark.new(
 		return Vector3.new(x, y)
 	end :: any,
 	50_000,
-	2_500
+	2_000
 )
