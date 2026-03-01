@@ -80,4 +80,4 @@ sh scripts/workflow/benchmark/init.sh
 export BENCHMARK_PATH=src/server/benchmarks/luau/var
 sh scripts/workflow/benchmark/init.sh
 
-gh pr create --base main --head "$BRANCH_NAME" --title "$DATA_RELEASE_VERSION" --fill
+# gh pr create --base main --head "$BRANCH_NAME" --title "$DATA_RELEASE_VERSION" --fill
