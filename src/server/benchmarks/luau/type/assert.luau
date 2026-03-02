@@ -18,5 +18,5 @@ return Benchmark.new(
 		assert(a ~= 0, "a must not be zero")
 	end :: any,
 	250_000,
-	1_000
+	100
 )

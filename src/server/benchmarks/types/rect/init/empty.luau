@@ -20,5 +20,5 @@ return Benchmark.new(
 		return Rect.new()
 	end :: any,
 	250_000,
-	1_000
+	100
 )

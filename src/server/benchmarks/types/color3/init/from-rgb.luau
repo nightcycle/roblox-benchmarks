@@ -24,5 +24,5 @@ return Benchmark.new(
 		return Color3.fromRGB(r, g, b)
 	end :: any,
 	250_000,
-	1_000
+	100
 )

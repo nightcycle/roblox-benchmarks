@@ -26,5 +26,5 @@ return Benchmark.new(
 		local _3 = c
 	end :: any,
 	250_000,
-	1_000
+	100
 )

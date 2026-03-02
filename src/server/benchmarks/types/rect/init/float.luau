@@ -27,5 +27,5 @@ return Benchmark.new(
 		return Rect.new(minX, minY, maxX, maxY)
 	end :: any,
 	250_000,
-	1_000
+	100
 )

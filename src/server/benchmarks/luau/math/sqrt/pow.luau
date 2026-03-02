@@ -23,5 +23,5 @@ return Benchmark.new(
 		return math.pow(value, 0.5)
 	end :: any,
 	250_000,
-	1_000
+	100
 )

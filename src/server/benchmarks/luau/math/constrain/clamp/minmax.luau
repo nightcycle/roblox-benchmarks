@@ -27,5 +27,5 @@ return Benchmark.new(
 		return math.min(math.max(v, min), max)
 	end :: any,
 	250_000,
-	1_000
+	100
 )

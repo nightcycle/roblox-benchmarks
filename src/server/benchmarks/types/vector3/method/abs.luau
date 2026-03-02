@@ -23,5 +23,5 @@ return Benchmark.new(
 		return a:Abs()
 	end :: any,
 	250_000,
-	1_000
+	100
 )
