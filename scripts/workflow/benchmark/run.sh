@@ -70,7 +70,7 @@ if [ "$TASK_STATE" != "COMPLETE" ]; then
 				export IS_RETRY=true
 				sh "$0" "$BENCHMARK_PATH"
 			fi
-		end
+		fi
 	fi
 
 	LOGS_RESPONSE=$(rbxcloud luau get-logs \
