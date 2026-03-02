@@ -85,6 +85,9 @@ fi
 
 echo "executing benchmark..."
 for i in $(seq 1 "$RUN_COUNT"); do
+	# set time at start
+	START_TIME=$(date +%s)
+
 	echo "Starting run $i of $RUN_COUNT"
 	export RUN_INDEX="$i"
 	sh scripts/workflow/benchmark/run.sh "$BENCHMARK_PATH"
@@ -93,6 +96,15 @@ for i in $(seq 1 "$RUN_COUNT"); do
 	echo "finished processing benchmark results"
 	rm -f "$RAW_RESULTS_FILE"
 	echo "Completed run $i of $RUN_COUNT"
+
+	# if time at end is less than the start time + 60 seconds, sleep until it is
+	END_TIME=$(date +%s)
+	ELAPSED_TIME=$((END_TIME - START_TIME))
+	if [ "$ELAPSED_TIME" -lt 60 ]; then
+		SLEEP_TIME=$((60 - ELAPSED_TIME))
+		echo "Sleeping for $SLEEP_TIME seconds to avoid rate limits..."
+		sleep "$SLEEP_TIME"
+	fi
 done
 echo "benchmark completed"
 
