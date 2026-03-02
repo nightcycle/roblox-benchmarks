@@ -20,68 +20,67 @@ cd ..
 sh scripts/workflow/benchmark/pull.sh
 sh scripts/workflow/benchmark/reset.sh
 
-# export BENCHMARK_PATH=src/server/benchmarks/luau/math/sqrt
-# sh scripts/workflow/benchmark/init.sh
+export BENCHMARK_PATH=src/server/benchmarks/luau/math/sqrt
+sh scripts/workflow/benchmark/init.sh
 
-# export BENCHMARK_PATH=src/server/benchmarks/luau/math/constrain
-# sh scripts/workflow/benchmark/init.sh
+export BENCHMARK_PATH=src/server/benchmarks/luau/math/constrain
+sh scripts/workflow/benchmark/init.sh
 
-# export BENCHMARK_PATH=src/server/benchmarks/luau/math/noise
-# sh scripts/workflow/benchmark/init.sh
+export BENCHMARK_PATH=src/server/benchmarks/luau/math/noise
+sh scripts/workflow/benchmark/init.sh
 
-# export BENCHMARK_PATH=src/server/benchmarks/luau/math/operations/add
-# sh scripts/workflow/benchmark/init.sh
+export BENCHMARK_PATH=src/server/benchmarks/luau/math/operations/add
+sh scripts/workflow/benchmark/init.sh
 
-# export BENCHMARK_PATH=src/server/benchmarks/luau/math/operations/bool
-# sh scripts/workflow/benchmark/init.sh
+export BENCHMARK_PATH=src/server/benchmarks/luau/math/operations/bool
+sh scripts/workflow/benchmark/init.sh
 
-# export BENCHMARK_PATH=src/server/benchmarks/luau/math/operations/divide
-# sh scripts/workflow/benchmark/init.sh
+export BENCHMARK_PATH=src/server/benchmarks/luau/math/operations/divide
+sh scripts/workflow/benchmark/init.sh
 
-# export BENCHMARK_PATH=src/server/benchmarks/luau/math/operations/mod
-# sh scripts/workflow/benchmark/init.sh
+export BENCHMARK_PATH=src/server/benchmarks/luau/math/operations/mod
+sh scripts/workflow/benchmark/init.sh
 
-# export BENCHMARK_PATH=src/server/benchmarks/luau/math/operations/multiply
-# sh scripts/workflow/benchmark/init.sh
+export BENCHMARK_PATH=src/server/benchmarks/luau/math/operations/multiply
+sh scripts/workflow/benchmark/init.sh
 
-# export BENCHMARK_PATH=src/server/benchmarks/luau/math/operations/subtract
-# sh scripts/workflow/benchmark/init.sh
+export BENCHMARK_PATH=src/server/benchmarks/luau/math/operations/subtract
+sh scripts/workflow/benchmark/init.sh
 
-# export BENCHMARK_PATH=src/server/benchmarks/luau/math/rounding
-# sh scripts/workflow/benchmark/init.sh
+export BENCHMARK_PATH=src/server/benchmarks/luau/math/rounding
+sh scripts/workflow/benchmark/init.sh
 
-# export BENCHMARK_PATH=src/server/benchmarks/types/brickcolor
-# sh scripts/workflow/benchmark/init.sh
+export BENCHMARK_PATH=src/server/benchmarks/types/brickcolor
+sh scripts/workflow/benchmark/init.sh
 
-# export BENCHMARK_PATH=src/server/benchmarks/types/color3
-# sh scripts/workflow/benchmark/init.sh
+export BENCHMARK_PATH=src/server/benchmarks/types/color3
+sh scripts/workflow/benchmark/init.sh
 
-# export BENCHMARK_PATH=src/server/benchmarks/types/rect
-# sh scripts/workflow/benchmark/init.sh
+export BENCHMARK_PATH=src/server/benchmarks/types/rect
+sh scripts/workflow/benchmark/init.sh
 
-# export BENCHMARK_PATH=src/server/benchmarks/types/vector2
-# sh scripts/workflow/benchmark/init.sh
+export BENCHMARK_PATH=src/server/benchmarks/types/vector2
+sh scripts/workflow/benchmark/init.sh
 
-# export BENCHMARK_PATH=src/server/benchmarks/types/vector3
-# sh scripts/workflow/benchmark/init.sh
+export BENCHMARK_PATH=src/server/benchmarks/types/vector3
+sh scripts/workflow/benchmark/init.sh
 
-# export BENCHMARK_PATH=src/server/benchmarks/luau/function
-# sh scripts/workflow/benchmark/init.sh
+export BENCHMARK_PATH=src/server/benchmarks/luau/function
+sh scripts/workflow/benchmark/init.sh
 
-# export BENCHMARK_PATH=src/server/benchmarks/luau/loop
-# sh scripts/workflow/benchmark/init.sh
+export BENCHMARK_PATH=src/server/benchmarks/luau/loop
+sh scripts/workflow/benchmark/init.sh
 
-# export BENCHMARK_PATH=src/server/benchmarks/luau/table
-# sh scripts/workflow/benchmark/init.sh
+export BENCHMARK_PATH=src/server/benchmarks/luau/table
+sh scripts/workflow/benchmark/init.sh
 
-# export BENCHMARK_PATH=src/server/benchmarks/luau/tostring
-# sh scripts/workflow/benchmark/init.sh
+export BENCHMARK_PATH=src/server/benchmarks/luau/tostring
+sh scripts/workflow/benchmark/init.sh
 
 export BENCHMARK_PATH=src/server/benchmarks/luau/type
 sh scripts/workflow/benchmark/init.sh
 
 export BENCHMARK_PATH=src/server/benchmarks/luau/var
 sh scripts/workflow/benchmark/init.sh --summarize
-
 
 # gh pr create --base main --head "$BRANCH_NAME" --title "$DATA_RELEASE_VERSION" --fill

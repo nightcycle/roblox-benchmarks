@@ -87,13 +87,29 @@ function unpackData(csv: CSV): { DataRow }
 	return out
 end
 function getAverageBaseline(dataSets: { [any]: { DataRow } }): number
+	local total: { number } = {}
+	for _, dataSet in pairs(dataSets) do
+		local runDataSets: { { number } } = {}
+		for _, dataRow in pairs(dataSet) do
+			local runnerIndex = dataRow["runner.index.n"]
+			if not runDataSets[runnerIndex] then
+				runDataSets[runnerIndex] = {}
+			end
+			table.insert(runDataSets[runnerIndex], dataRow["runner.baseline.ps"])
+		end
+		for i, runDataSet in pairs(runDataSets) do
+			local sum = 0
+			for _, baseline in pairs(runDataSet) do
+				sum += baseline
+			end
+			table.insert(total, sum / #runDataSet)
+		end
+	end
 	local sum = 0
 	local count = 0
-	for _, dataSet in pairs(dataSets) do
-		for _, dataRow in pairs(dataSet) do
-			sum += dataRow["runner.baseline.ps"]
-			count += 1
-		end
+	for _, v in pairs(total) do
+		sum += v
+		count += 1
 	end
 	assert(count > 0, `empty dataset`)
 	return sum / count
