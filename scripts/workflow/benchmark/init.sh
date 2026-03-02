@@ -97,11 +97,11 @@ for i in $(seq 1 "$RUN_COUNT"); do
 	rm -f "$RAW_RESULTS_FILE"
 	echo "Completed run $i of $RUN_COUNT"
 
-	# if time at end is less than the start time + 60 seconds, sleep until it is
+	# if time at end is less than the start time + 15 seconds, sleep until it is
 	END_TIME=$(date +%s)
 	ELAPSED_TIME=$((END_TIME - START_TIME))
-	if [ "$ELAPSED_TIME" -lt 60 ]; then
-		SLEEP_TIME=$((60 - ELAPSED_TIME))
+	if [ "$ELAPSED_TIME" -lt 15 ]; then
+		SLEEP_TIME=$((15 - ELAPSED_TIME))
 		echo "Sleeping for $SLEEP_TIME seconds to avoid rate limits..."
 		sleep "$SLEEP_TIME"
 	fi
