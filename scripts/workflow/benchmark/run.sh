@@ -69,6 +69,7 @@ if [ "$TASK_STATE" != "COMPLETE" ]; then
 				echo "Internal error detected, retrying benchmark..."
 				export IS_RETRY=true
 				sh "$0" "$BENCHMARK_PATH"
+				exit 0
 			fi
 		fi
 	fi
