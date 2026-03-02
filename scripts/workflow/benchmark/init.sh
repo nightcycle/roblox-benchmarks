@@ -1,5 +1,7 @@
 #!/bin/sh
 set -e
+echo ""
+echo ""
 echo "Running benchmark"
 
 : "${DATA_RELEASE_VERSION:?'arg 1, DATA_RELEASE_VERSION, is not set'}"
@@ -65,7 +67,6 @@ cd ..
 # RAW_RESULTS_FILE=$(mktemp)
 RAW_RESULTS_FILE="$DATA_SUBMODULE_PATH/$DATA_DIR_PATH/raw.json"
 export RAW_RESULTS_FILE
-
 
 cd "$DATA_SUBMODULE_PATH"
 BRANCH_NAME_ENDING=$(printf '%s' "$DATA_RELEASE_VERSION" | tr '.' '-')

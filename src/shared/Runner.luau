@@ -11,6 +11,7 @@ type Benchmark = Benchmark.Benchmark
 type Sample = {
 	Inputs: { any },
 	Elapsed: number, -- pico seconds
+	Baseline: number, -- pico seconds
 }
 export type Overview = {
 	read Benchmark: Benchmark,
@@ -87,32 +88,34 @@ function Runner.new(target: ModuleScript): Runner
 				sampleParameters[sample] = benchmark:generate(rng)
 			end
 			table.freeze(sampleParameters)
-			task.wait()
-			local minElapsed = 0
-			do
-				local startTime = os.clock()
-				for repeatIndex = 1, benchmark.Repeats do
-					-- empty run
-				end
-				local stopTime = os.clock()
-				minElapsed = stopTime - startTime
-			end
-			local baseline = math.ceil((minElapsed / benchmark.Repeats) * 1_000_000_000_000)
+
 			local function run(...: any): Sample
+				task.wait()
+				local minElapsed = 0
+				do
+					local startTime = os.clock()
+					for repeatIndex = 1, benchmark.Repeats do
+						-- empty run
+					end
+					local stopTime = os.clock()
+					minElapsed = stopTime - startTime
+				end
+				local baseline = math.ceil((minElapsed / benchmark.Repeats) * 1_000_000_000_000)
 				local startTime = os.clock()
 				for repeatIndex = 1, benchmark.Repeats do
 					benchmark.Method(...)
 				end
 				local stopTime = os.clock()
 				local elapsed = (stopTime - startTime)
-				assert(
-					elapsed > 0,
-					`target "{self.Target:GetFullName()}" ran in 0 or less time ({elapsed} s), increase the number of repeats for such a low-level benchmark`
-				)
 				local normalized = math.ceil((elapsed / benchmark.Repeats) * 1_000_000_000_000) -- pico seconds
+				assert(
+					normalized > baseline,
+					`target "{self.Target:GetFullName()}" ran in ({normalized} picoseconds) which is less than a run doing nothing ({baseline} picoseconds). increase the number of repeats for such a low-level benchmark`
+				)
 				return {
 					Inputs = { ... },
 					Elapsed = normalized,
+					Baseline = baseline,
 				}
 			end
 
@@ -147,7 +150,7 @@ function Runner.new(target: ModuleScript): Runner
 							local data = self.Data[j]
 							local row: { string } = {
 								tostring(ENV.RUNNER_INDEX),
-								tostring(baseline),
+								tostring(data.Baseline),
 								tostring(data.Elapsed),
 								tostring(self.Benchmark.Repeats),
 							}

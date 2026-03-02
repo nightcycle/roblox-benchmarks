@@ -3,6 +3,8 @@ set -e
 
 rokit install
 
+lune setup
+
 choco install jq -y # if this yields forever, use an admin terminal outside of your IDE
 jq --version # restart your terminal if this errors
 
