@@ -11,7 +11,7 @@ inputs:
     default: "111123068113322"
   run-count:
     description: The number of times to run the benchmark.
-    default: "2"
+    default: "1"
   rbx-api-key:
     description: The  API key to authenticate with the Roblox API.
     required: true
