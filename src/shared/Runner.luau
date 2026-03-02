@@ -141,7 +141,7 @@ function Runner.new(target: ModuleScript): Runner
 					Data = data,
 					exportToCSV = function(self: Overview): string
 						local rows = {}
-						local headers = { "runner.index", "runner.baseline.ps", "elapsed.ps", "repeats.n" }
+						local headers = { "runner.index.n", "runner.baseline.ps", "elapsed.ps", "repeats.n" }
 						for i, param in self.Benchmark.Parameters do
 							table.insert(headers, ("param." .. param.Key .. "." .. param.Type):lower())
 						end
