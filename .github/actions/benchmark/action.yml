@@ -66,4 +66,4 @@ runs:
         export DATA_SUBMODULE_PATH=${{ inputs.data-submodule-path }}
         export DATA_DIR_PATH=${{ inputs.data-dir-path }}
         export GH_TOKEN=${{ inputs.data-update-token }}
-        sh scripts/workflow/benchmark/all.sh ${{ inputs.data-release-version }}
+        sh scripts/workflow/benchmark/all.sh ${{ inputs.data-release-version }} ${{ inputs.run-count }}

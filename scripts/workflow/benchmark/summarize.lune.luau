@@ -34,17 +34,40 @@ function parseCSV(path: string): CSV
 	}
 end
 
+type StatResponse = {
+	mean: number,
+	stddev: number,
+	p10: number,
+	p50: number,
+	p90: number,
+	p99: number,
+	min: number,
+	max: number,
+	median: number,
+	q1: number,
+	q3: number,
+}
+
 do
-	local summaryCSC: CSV = {
-		headers = {
-			["bench.path"] = 1,
-			["bench.duration"] = 2,
-			["bench.samples"] = 3,
-			["bench.repeats"] = 4,
-			["stats.mean"] = 5,
-			["stats.median"] = 6,
-			["stats.p90"] = 7,
-			["stats.p99"] = 8,
-		},
+	local summaryCSV: CSV = {
+		headers = parseHeader(table.concat({
+			"bench.path",
+			"bench.runs",
+			"bench.samples",
+			"bench.repeats",
+			"stats.mean",
+			"stats.stddev",
+			"stats.p10",
+			"stats.p50",
+			"stats.p90",
+			"stats.p99",
+			"stats.min",
+			"stats.max",
+			"stats.median",
+			"stats.q1",
+			"stats.q3",
+			"tags",
+		}, ",")),
 	}
+	local function summarize(data: { number }) end
 end
