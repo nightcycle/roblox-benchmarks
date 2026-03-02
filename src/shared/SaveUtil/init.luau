@@ -44,7 +44,6 @@ end
 -- end
 
 function Util.appendCSV(path: string, rows: string, header: string)
-	rows = "\n" .. rows
 	if ENV.IS_DEBUG then
 		local filePath = getFinalPath(path)
 		local parentDir = getParentDirectory(filePath)

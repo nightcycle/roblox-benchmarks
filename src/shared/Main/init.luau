@@ -55,7 +55,7 @@ return function()
 	for i, runModule in modules do
 		table.insert(runners, Runner.new(runModule))
 	end
-	if ENV.RUNNER_INDEX == 0 then
+	if ENV.RUNNER_INDEX == 1 then
 		SaveUtil.newSession()
 	end
 	for i, runner in runners do

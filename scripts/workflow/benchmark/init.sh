@@ -11,6 +11,10 @@ echo "Using data submodule: $DATA_SUBMODULE_PATH"
 : "${DATA_DIR_PATH:?'arg 1, DATA_DIR_PATH, is not set'}"
 echo "Using data directory: $DATA_DIR_PATH"
 
+RUN_COUNT="${RUN_COUNT:?'RUN_COUNT, is not set'}"
+export RUN_COUNT
+echo "Using run count: $RUN_COUNT"
+
 BRANCH_NAME_ENDING=$(printf '%s' "$DATA_RELEASE_VERSION" | tr '.' '-')
 BRANCH_NAME="release/$BRANCH_NAME_ENDING"
 export BRANCH_NAME="$BRANCH_NAME"
@@ -62,9 +66,6 @@ cd ..
 RAW_RESULTS_FILE="$DATA_SUBMODULE_PATH/$DATA_DIR_PATH/raw.json"
 export RAW_RESULTS_FILE
 
-echo "executing benchmark..."
-sh scripts/workflow/benchmark/run.sh "$BENCHMARK_PATH"
-echo "benchmark completed"
 
 cd "$DATA_SUBMODULE_PATH"
 BRANCH_NAME_ENDING=$(printf '%s' "$DATA_RELEASE_VERSION" | tr '.' '-')
@@ -81,10 +82,19 @@ else
 	cd ..
 fi
 
-echo "processing benchmark results..."
-sh scripts/workflow/benchmark/process-data.sh
-echo "finished processing benchmark results"
-rm -f "$RAW_RESULTS_FILE"
+echo "executing benchmark..."
+for i in $(seq 1 "$RUN_COUNT"); do
+	echo "Starting run $i of $RUN_COUNT"
+	export RUN_INDEX="$i"
+	sh scripts/workflow/benchmark/run.sh "$BENCHMARK_PATH"
+	echo "processing benchmark results..."
+	sh scripts/workflow/benchmark/process-data.sh
+	echo "finished processing benchmark results"
+	rm -f "$RAW_RESULTS_FILE"
+	echo "Completed run $i of $RUN_COUNT"
+done
+echo "benchmark completed"
+
 if [ -z "$NO_GIT" ]; then
 	sh scripts/workflow/benchmark/commit.sh
 fi

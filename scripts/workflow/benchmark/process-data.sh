@@ -24,5 +24,5 @@ jq -r '.output.results[0].data.raw | keys[]' "$RAW_RESULTS_FILE" | tr -d '\r' | 
     fi
 
     # Extract value directly from file
-    jq -r --arg k "$path" '.output.results[0].data.raw[$k].rows' "$RAW_RESULTS_FILE" > "${DATA_SUBMODULE_PATH}/${DATA_DIR_PATH}/${path}"
+    jq -r --arg k "$path" '.output.results[0].data.raw[$k].rows' "$RAW_RESULTS_FILE" >> "${DATA_SUBMODULE_PATH}/${DATA_DIR_PATH}/${path}"
 done
