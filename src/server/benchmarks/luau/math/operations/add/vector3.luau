@@ -10,7 +10,10 @@ local Benchmark = require(game.ReplicatedStorage.Shared.Benchmark)
 -- Private Functions
 -- Class
 return Benchmark.new(
-	{},
+	{
+		Benchmark.Parameter.Vector3.new("a"),
+		Benchmark.Parameter.Vector3.new("b"),
+	},
 	function(a: Vector3, b: Vector3)
 		return a + b
 	end :: any,
