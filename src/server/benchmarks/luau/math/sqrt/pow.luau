@@ -22,6 +22,6 @@ return Benchmark.new(
 	function(value: number)
 		return math.pow(value, 0.5)
 	end :: any,
-	100_000,
+	250_000,
 	1_000
 )

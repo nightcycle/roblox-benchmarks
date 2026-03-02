@@ -25,6 +25,6 @@ return Benchmark.new(
 	function(a: Vector2, b: Vector2, epsilon: number)
 		return a:FuzzyEq(b, epsilon)
 	end :: any,
-	100_000,
+	250_000,
 	1_000
 )

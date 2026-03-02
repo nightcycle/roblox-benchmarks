@@ -23,6 +23,6 @@ return Benchmark.new(
 	function(x: number, y: number)
 		return Vector2.new(x, y)
 	end :: any,
-	100_000,
+	250_000,
 	1_000
 )

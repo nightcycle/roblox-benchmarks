@@ -24,6 +24,6 @@ return Benchmark.new(
 	function(v: number, min: number, max: number)
 		return math.clamp(v, min, max)
 	end :: any,
-	100_000,
+	250_000,
 	1_000
 )

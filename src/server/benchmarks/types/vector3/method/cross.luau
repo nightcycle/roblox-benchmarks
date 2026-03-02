@@ -23,6 +23,6 @@ return Benchmark.new(
 	function(a: Vector3, b: Vector3)
 		return a:Cross(b)
 	end :: any,
-	100_000,
+	250_000,
 	1_000
 )

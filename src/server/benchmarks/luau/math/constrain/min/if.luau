@@ -27,6 +27,6 @@ return Benchmark.new(
 			return b
 		end
 	end :: any,
-	100_000,
+	250_000,
 	1_000
 )
