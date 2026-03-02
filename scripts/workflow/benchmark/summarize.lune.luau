@@ -5,6 +5,7 @@ local process = require("@lune/process")
 local DATA_DIR = process.args[1]
 assert(DATA_DIR, `bad arg1 / DATA_DIR`)
 local OUT_PATH = DATA_DIR .. "/summary.csv"
+local ALL_PATH = DATA_DIR .. "/all.csv"
 type CSV = {
 	headers: { [string]: number },
 	rows: { { [string]: string } },
@@ -118,13 +119,9 @@ function getAverageBaseline(dataSets: { [any]: { DataRow } }): number
 	assert(count > 0, `empty dataset`)
 	return sum / count
 end
-function normalizeData(avgBaseline: number, dataSet: { DataRow }): { number }
-	local out: { number } = {}
-	for _, dataRow in ipairs(dataSet) do
-		local relativeSpeed = dataRow["runner.baseline.ps"] / avgBaseline
-		table.insert(out, (dataRow["elapsed.ps"] - dataRow["runner.baseline.ps"]) / relativeSpeed)
-	end
-	return out
+function normalizeRawElapsed(rawElapsed: number, baseline: number, avgBaseline: number): number
+	local relativeSpeed = baseline / avgBaseline
+	return math.ceil((rawElapsed - baseline) / relativeSpeed)
 end
 
 type StatInfo = {
@@ -143,6 +140,7 @@ type StatInfo = {
 }
 
 do
+	local currentRunnerId = 0
 	local summaryCSV: CSV = {
 		headers = parseHeader(table.concat({
 			"bench.path",
@@ -160,6 +158,18 @@ do
 			"stats.median",
 			"stats.q1",
 			"stats.q3",
+		}, ",")),
+		rows = {},
+	}
+	local allCSV: CSV = {
+		headers = parseHeader(table.concat({
+			"bench.path",
+			"bench.repeats.n",
+			"bench.baseline.ps",
+			"runner.id",
+			"runner.baseline.ps",
+			"elapsed.raw.ps",
+			"elapsed.clean.ps",
 		}, ",")),
 		rows = {},
 	}
@@ -232,7 +242,10 @@ do
 		}
 	end
 	local function addSummaryRow(benchPath: string, avgBaseline: number, dataSet: { DataRow })
-		local data = normalizeData(avgBaseline, dataSet)
+		local data: { number } = {}
+		for _, dataRow in ipairs(dataSet) do
+			table.insert(data, normalizeRawElapsed(dataRow["elapsed.ps"], dataRow["runner.baseline.ps"], avgBaseline))
+		end
 		local runCount: number = 0
 		local repeatCount: number = 0
 		for _, dataRow in ipairs(dataSet) do
@@ -240,6 +253,29 @@ do
 			assert(repeatCount == 0 or repeatCount == dataRow["repeats.n"])
 			repeatCount = dataRow["repeats.n"]
 		end
+
+		for i = 1, runCount do
+			currentRunnerId += 1
+			for _, dataRow in ipairs(dataSet) do
+				if dataRow["runner.index.n"] == i then
+					table.insert(
+						allCSV.rows,
+						{
+							["bench.path"] = benchPath,
+							["bench.repeats.n"] = tostring(dataRow["repeats.n"]),
+							["bench.baseline.ps"] = tostring(math.ceil(avgBaseline)),
+							["runner.id"] = tostring(currentRunnerId),
+							["runner.baseline.ps"] = tostring(dataRow["runner.baseline.ps"]),
+							["elapsed.raw.ps"] = tostring(dataRow["elapsed.ps"]),
+							["elapsed.clean.ps"] = tostring(
+								normalizeRawElapsed(dataRow["elapsed.ps"], dataRow["runner.baseline.ps"], avgBaseline)
+							),
+						} :: { [string]: string }
+					)
+				end
+			end
+		end
+
 		local statsInfo = summarize(data)
 		table.insert(
 			summaryCSV.rows,
@@ -281,6 +317,10 @@ do
 		print(`removing old summary at {OUT_PATH}`)
 		fs.removeFile(OUT_PATH)
 	end
+	if fs.isFile(ALL_PATH) then
+		print(`removing old summary at {ALL_PATH}`)
+		fs.removeFile(ALL_PATH)
+	end
 	searchForData(DATA_DIR)
 	local averageBaseline = getAverageBaseline(dataSets)
 	print(`average baseline is {averageBaseline} picoseconds`)
@@ -290,4 +330,6 @@ do
 	end
 	print(`writing summary to {OUT_PATH}`)
 	fs.writeFile(OUT_PATH, bakeCSV(summaryCSV))
+	print(`writing all data to {ALL_PATH}`)
+	fs.writeFile(ALL_PATH, bakeCSV(allCSV))
 end
