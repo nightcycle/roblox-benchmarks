@@ -77,10 +77,11 @@ sh scripts/workflow/benchmark/reset.sh
 # export BENCHMARK_PATH=src/server/benchmarks/luau/tostring
 # sh scripts/workflow/benchmark/init.sh
 
-# export BENCHMARK_PATH=src/server/benchmarks/luau/type
-# sh scripts/workflow/benchmark/init.sh
+export BENCHMARK_PATH=src/server/benchmarks/luau/type
+sh scripts/workflow/benchmark/init.sh
 
 export BENCHMARK_PATH=src/server/benchmarks/luau/var
-sh scripts/workflow/benchmark/init.sh
+sh scripts/workflow/benchmark/init.sh --summarize
+
 
 # gh pr create --base main --head "$BRANCH_NAME" --title "$DATA_RELEASE_VERSION" --fill

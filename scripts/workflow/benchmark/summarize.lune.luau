@@ -1,6 +1,10 @@
 --!strict
 local fs = require("@lune/fs")
+local process = require("@lune/process")
 
+local DATA_DIR = process.args[1]
+assert(DATA_DIR, `bad arg1 / DATA_DIR`)
+local OUT_PATH = DATA_DIR .. "/summary.csv"
 type CSV = {
 	headers: { [string]: number },
 	rows: { { [string]: string } },
@@ -16,12 +20,15 @@ function parseHeader(header: string): { [string]: number }
 end
 
 function parseCSV(path: string): CSV
-	local content = fs.readFile(path)
+	local content = fs.readFile(path):gsub("\r", "")
 	local lines = content:split("\n")
 	local headerList = parseHeader(lines[1])
 	table.remove(lines, 1)
 	local rows = {}
-	for _, line in ipairs(lines) do
+	for i, line in ipairs(lines) do
+		if line == "" and i == #lines then
+			break
+		end
 		local values = line:split(",")
 		local row = {}
 		for headerName, headerIndex in pairs(headerList) do
@@ -34,6 +41,24 @@ function parseCSV(path: string): CSV
 		rows = rows,
 	}
 end
+function bakeCSV(csv: CSV): string
+	local out = {}
+	local headers = {}
+	for headerName, i in pairs(csv.headers) do
+		headers[i] = headerName
+	end
+	table.insert(out, table.concat(headers, ","))
+	for _, row in ipairs(csv.rows) do
+		local line: { string } = {}
+		for _, headerName in ipairs(headers) do
+			local value = row[headerName] or ""
+			value = value:gsub(",", ";") -- escape commas
+			table.insert(line, value)
+		end
+		table.insert(out, table.concat(line, ","))
+	end
+	return table.concat(out, "\n")
+end
 type DataRow = {
 	["runner.index.n"]: number,
 	["runner.baseline.ps"]: number,
@@ -43,7 +68,7 @@ type DataRow = {
 function unpackData(csv: CSV): { DataRow }
 	local out = {}
 	for _, row in ipairs(csv.rows) do
-		local runnerIndex = tonumber(row["runner.index.n"])
+		local runnerIndex = tonumber(row["runner.index.n"] or row["runner.index"])
 		assert(runnerIndex, `bad runnerIndex`)
 		local baseline = tonumber(row["runner.baseline.ps"])
 		assert(baseline, `bad baseline`)
@@ -61,11 +86,11 @@ function unpackData(csv: CSV): { DataRow }
 	end
 	return out
 end
-function getAverageBaseline(dataSets: { { DataRow } }): number
+function getAverageBaseline(dataSets: { [any]: { DataRow } }): number
 	local sum = 0
 	local count = 0
-	for _, dataSet in ipairs(dataSets) do
-		for _, dataRow in ipairs(dataSet) do
+	for _, dataSet in pairs(dataSets) do
+		for _, dataRow in pairs(dataSet) do
 			sum += dataRow["runner.baseline.ps"]
 			count += 1
 		end
@@ -173,41 +198,76 @@ do
 		end
 		return {
 			count = count,
-			mean = mean,
-			stddev = standardDeviation,
-			p10 = p10,
-			p50 = p50,
-			p90 = p90,
-			p99 = p99,
-			min = min,
-			max = max,
-			median = median,
-			q1 = q1,
-			q3 = q3,
+			mean = math.ceil(mean),
+			stddev = math.ceil(standardDeviation),
+			p10 = math.ceil(p10),
+			p50 = math.ceil(p50),
+			p90 = math.ceil(p90),
+			p99 = math.ceil(p99),
+			min = math.ceil(min),
+			max = math.ceil(max),
+			median = math.ceil(median),
+			q1 = math.ceil(q1),
+			q3 = math.ceil(q3),
 		}
 	end
 	local function addSummaryRow(benchPath: string, avgBaseline: number, dataSet: { DataRow })
 		local data = normalizeData(avgBaseline, dataSet)
-		local stats = summarize(data)
+		local runCount: number = 0
+		local repeatCount: number = 0
+		for _, dataRow in ipairs(dataSet) do
+			runCount = math.max(runCount, dataRow["runner.index.n"])
+			assert(repeatCount == 0 or repeatCount == dataRow["repeats.n"])
+			repeatCount = dataRow["repeats.n"]
+		end
+		local statsInfo = summarize(data)
 		table.insert(
 			summaryCSV.rows,
 			{
 				["bench.path"] = benchPath,
-				["bench.runs"] = tostring(runs),
-				["bench.samples"] = tostring(samples),
-				["bench.repeats"] = tostring(repeats),
-				["stats.mean"] = tostring(stats.mean),
-				["stats.stddev"] = tostring(stats.stddev),
-				["stats.p10"] = tostring(stats.p10),
-				["stats.p50"] = tostring(stats.p50),
-				["stats.p90"] = tostring(stats.p90),
-				["stats.p99"] = tostring(stats.p99),
-				["stats.min"] = tostring(stats.min),
-				["stats.max"] = tostring(stats.max),
-				["stats.median"] = tostring(stats.median),
-				["stats.q1"] = tostring(stats.q1),
-				["stats.q3"] = tostring(stats.q3),
+				["bench.runs"] = tostring(runCount),
+				["bench.samples"] = tostring(#dataSet),
+				["bench.repeats"] = tostring(repeatCount),
+				["stats.mean"] = tostring(statsInfo.mean),
+				["stats.stddev"] = tostring(statsInfo.stddev),
+				["stats.p10"] = tostring(statsInfo.p10),
+				["stats.p50"] = tostring(statsInfo.p50),
+				["stats.p90"] = tostring(statsInfo.p90),
+				["stats.p99"] = tostring(statsInfo.p99),
+				["stats.min"] = tostring(statsInfo.min),
+				["stats.max"] = tostring(statsInfo.max),
+				["stats.median"] = tostring(statsInfo.median),
+				["stats.q1"] = tostring(statsInfo.q1),
+				["stats.q3"] = tostring(statsInfo.q3),
 			} :: { [string]: string }
 		)
 	end
+
+	local dataSets: { [string]: { DataRow } } = {}
+	local function searchForData(dir: string)
+		for _, file in ipairs(fs.readDir(dir)) do
+			local path = dir .. "/" .. file
+			if fs.isDir(path) then
+				searchForData(path)
+			else
+				local csv = parseCSV(path)
+				local data = unpackData(csv)
+				print(`got {#data} rows of data for {path}`)
+				dataSets[path] = data
+			end
+		end
+	end
+	if fs.isFile(OUT_PATH) then
+		print(`removing old summary at {OUT_PATH}`)
+		fs.removeFile(OUT_PATH)
+	end
+	searchForData(DATA_DIR)
+	local averageBaseline = getAverageBaseline(dataSets)
+	print(`average baseline is {averageBaseline} picoseconds`)
+	for path, dataSet in pairs(dataSets) do
+		print(`summarizing {path}`)
+		addSummaryRow(path:sub(#DATA_DIR + 2), averageBaseline, dataSet)
+	end
+	print(`writing summary to {OUT_PATH}`)
+	fs.writeFile(OUT_PATH, bakeCSV(summaryCSV))
 end

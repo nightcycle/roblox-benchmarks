@@ -4,6 +4,11 @@ echo ""
 echo ""
 echo "Running benchmark"
 
+SOLVE_SUMMARY=false
+if [ "$1" = "--summarize" ]; then
+	SOLVE_SUMMARY=true
+fi
+
 : "${DATA_RELEASE_VERSION:?'arg 1, DATA_RELEASE_VERSION, is not set'}"
 echo "Using data release version: $DATA_RELEASE_VERSION"
 
@@ -107,6 +112,12 @@ for i in $(seq 1 "$RUN_COUNT"); do
 	fi
 done
 echo "benchmark completed"
+
+if [ "$SOLVE_SUMMARY" = true ]; then
+	echo "solving summary..."
+	lune run scripts/workflow/benchmark/summarize.lune.luau "$DATA_SUBMODULE_PATH/$DATA_DIR_PATH"
+	echo "finished solving summary"
+fi
 
 if [ -z "$NO_GIT" ]; then
 	sh scripts/workflow/benchmark/commit.sh
