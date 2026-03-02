@@ -17,6 +17,6 @@ return Benchmark.new(
 	function(min: Vector2, max: Vector2)
 		return Rect.new(min, max)
 	end :: any,
-	250_000,
+	50_000,
 	100
 )

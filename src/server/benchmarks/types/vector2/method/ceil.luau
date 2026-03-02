@@ -16,6 +16,6 @@ return Benchmark.new(
 	function(a: Vector2)
 		return a:Ceil()
 	end :: any,
-	250_000,
+	50_000,
 	100
 )

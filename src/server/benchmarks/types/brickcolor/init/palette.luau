@@ -15,6 +15,6 @@ return Benchmark.new(
 	function()
 		return BrickColor.palette(RED_VAL)
 	end :: any,
-	250_000,
+	50_000,
 	100
 )

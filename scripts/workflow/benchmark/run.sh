@@ -60,6 +60,19 @@ done
 
 if [ "$TASK_STATE" != "COMPLETE" ]; then
 	echo "task failed: $TASK_RESPONSE"
+
+	TASK_ERROR=$(printf '%s' "$TASK_RESPONSE" | jq -r '.error // empty')
+	if [ -n "$TASK_ERROR" ]; then
+		TASK_ERROR_CODE=$(printf '%s' "$TASK_ERROR" | jq -r '.code // empty')
+		if [ -n "$TASK_ERROR_CODE" ]; then
+			if [ "$TASK_ERROR_CODE" = "INTERNAL_ERROR" ] && [ "$IS_RETRY" != "true" ]; then
+				echo "Internal error detected, retrying benchmark..."
+				export IS_RETRY=true
+				sh "$0" "$BENCHMARK_PATH"
+			fi
+		end
+	fi
+
 	LOGS_RESPONSE=$(rbxcloud luau get-logs \
 		-u "$UNIVERSE_ID" \
 		-i "$PLACE_ID" \

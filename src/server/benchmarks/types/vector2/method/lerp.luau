@@ -18,6 +18,6 @@ return Benchmark.new(
 	function(a: Vector2, b: Vector2, alpha: number)
 		return a:Lerp(b, alpha)
 	end :: any,
-	250_000,
+	50_000,
 	100
 )

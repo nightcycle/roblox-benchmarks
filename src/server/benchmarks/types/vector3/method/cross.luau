@@ -17,6 +17,6 @@ return Benchmark.new(
 	function(a: Vector3, b: Vector3)
 		return a:Cross(b)
 	end :: any,
-	250_000,
+	50_000,
 	100
 )

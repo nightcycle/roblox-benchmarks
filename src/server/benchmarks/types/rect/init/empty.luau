@@ -14,6 +14,6 @@ return Benchmark.new(
 	function()
 		return Rect.new()
 	end :: any,
-	250_000,
+	50_000,
 	100
 )

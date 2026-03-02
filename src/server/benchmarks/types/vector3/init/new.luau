@@ -17,6 +17,6 @@ return Benchmark.new(
 	function(x: number, y: number)
 		return Vector3.new(x, y)
 	end :: any,
-	250_000,
+	50_000,
 	100
 )
