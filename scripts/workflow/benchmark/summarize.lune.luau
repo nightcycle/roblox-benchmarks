@@ -43,7 +43,7 @@ type DataRow = {
 function unpackData(csv: CSV): { DataRow }
 	local out = {}
 	for _, row in ipairs(csv.rows) do
-		local runnerIndex = tonumber(row["runner.index.n"] or row["runner.index"])
+		local runnerIndex = tonumber(row["runner.index.n"])
 		assert(runnerIndex, `bad runnerIndex`)
 		local baseline = tonumber(row["runner.baseline.ps"])
 		assert(baseline, `bad baseline`)
@@ -115,7 +115,6 @@ do
 			"stats.median",
 			"stats.q1",
 			"stats.q3",
-			"tags",
 		}, ",")),
 		rows = {},
 	}
@@ -187,43 +186,28 @@ do
 			q3 = q3,
 		}
 	end
-	local function getData(csv: CSV): { number }
-		local data: { number } = {}
-		for _, row in csv.rows do
-			local value = tonumber(row["bench.samples"])
-			if value then
-				table.insert(data, value)
-			end
-		end
-		return data
-	end
-
-	local function addSummaryRow(
-		csv: CSV,
-		benchPath: string,
-		runs: number,
-		samples: number,
-		repeats: number,
-		stats: StatInfo,
-		tags: { string }
-	): (())
-		table.insert(csv.rows, {
-			["bench.path"] = benchPath,
-			["bench.runs"] = tostring(runs),
-			["bench.samples"] = tostring(samples),
-			["bench.repeats"] = tostring(repeats),
-			["stats.mean"] = tostring(stats.mean),
-			["stats.stddev"] = tostring(stats.stddev),
-			["stats.p10"] = tostring(stats.p10),
-			["stats.p50"] = tostring(stats.p50),
-			["stats.p90"] = tostring(stats.p90),
-			["stats.p99"] = tostring(stats.p99),
-			["stats.min"] = tostring(stats.min),
-			["stats.max"] = tostring(stats.max),
-			["stats.median"] = tostring(stats.median),
-			["stats.q1"] = tostring(stats.q1),
-			["stats.q3"] = tostring(stats.q3),
-			["tags"] = table.concat(tags, ";"),
-		})
+	local function addSummaryRow(benchPath: string, avgBaseline: number, dataSet: { DataRow })
+		local data = normalizeData(avgBaseline, dataSet)
+		local stats = summarize(data)
+		table.insert(
+			summaryCSV.rows,
+			{
+				["bench.path"] = benchPath,
+				["bench.runs"] = tostring(runs),
+				["bench.samples"] = tostring(samples),
+				["bench.repeats"] = tostring(repeats),
+				["stats.mean"] = tostring(stats.mean),
+				["stats.stddev"] = tostring(stats.stddev),
+				["stats.p10"] = tostring(stats.p10),
+				["stats.p50"] = tostring(stats.p50),
+				["stats.p90"] = tostring(stats.p90),
+				["stats.p99"] = tostring(stats.p99),
+				["stats.min"] = tostring(stats.min),
+				["stats.max"] = tostring(stats.max),
+				["stats.median"] = tostring(stats.median),
+				["stats.q1"] = tostring(stats.q1),
+				["stats.q3"] = tostring(stats.q3),
+			} :: { [string]: string }
+		)
 	end
 end

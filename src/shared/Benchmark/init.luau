@@ -23,11 +23,7 @@ local Benchmark = {}
 Benchmark.Parameter = Parameter
 
 function Benchmark.new(parameters: { Parameter }, method: (...any) -> (), repeats: number?, samples: number?)
-	local sortedTags = table.clone(tags)
-	table.sort(sortedTags)
-	table.freeze(sortedTags)
 	return {
-		Tags = sortedTags,
 		Parameters = parameters,
 		Method = method,
 		Repeats = repeats or CONSTANTS.DEFAULT_REPEATS,
