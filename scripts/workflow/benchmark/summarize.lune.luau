@@ -76,6 +76,10 @@ function unpackData(csv: CSV): { DataRow }
 		assert(elapsed, `bad elapsed`)
 		local repeats = tonumber(row["repeats.n"])
 		assert(repeats, `bad repeats`)
+		if baseline > elapsed then
+			print(`warning: baseline {baseline} is greater than elapsed {elapsed} for runner index {runnerIndex}`)
+			continue
+		end
 		local dataRow: DataRow = {
 			["runner.index.n"] = runnerIndex,
 			["runner.baseline.ps"] = baseline,

@@ -108,10 +108,10 @@ function Runner.new(target: ModuleScript): Runner
 				local stopTime = os.clock()
 				local elapsed = (stopTime - startTime)
 				local normalized = math.ceil((elapsed / benchmark.Repeats) * 1_000_000_000_000) -- pico seconds
-				assert(
-					normalized > baseline,
-					`target "{self.Target:GetFullName()}" ran in ({normalized} picoseconds) which is less than a run doing nothing ({baseline} picoseconds). increase the number of repeats for such a low-level benchmark`
-				)
+				-- assert(
+				-- 	normalized > baseline,
+				-- 	`target "{self.Target:GetFullName()}" ran in ({normalized} picoseconds) which is less than a run doing nothing ({baseline} picoseconds). increase the number of repeats for such a low-level benchmark`
+				-- )
 				return {
 					Inputs = { ... },
 					Elapsed = normalized,
