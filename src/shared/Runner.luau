@@ -97,7 +97,7 @@ function Runner.new(target: ModuleScript): Runner
 				local stopTime = os.clock()
 				minElapsed = stopTime - startTime
 			end
-			local baseline = math.ceil(minElapsed / benchmark.Repeats) * 1_000_000_000_000
+			local baseline = math.ceil((minElapsed / benchmark.Repeats) * 1_000_000_000_000)
 			local function run(...: any): Sample
 				local startTime = os.clock()
 				for repeatIndex = 1, benchmark.Repeats do

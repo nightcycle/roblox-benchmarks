@@ -20,8 +20,8 @@ cd ..
 sh scripts/workflow/benchmark/pull.sh
 sh scripts/workflow/benchmark/reset.sh
 
-export BENCHMARK_PATH=src/server/benchmarks/luau/math/sqrt
-sh scripts/workflow/benchmark/init.sh
+# export BENCHMARK_PATH=src/server/benchmarks/luau/math/sqrt
+# sh scripts/workflow/benchmark/init.sh
 
 # export BENCHMARK_PATH=src/server/benchmarks/luau/math/constrain
 # sh scripts/workflow/benchmark/init.sh
@@ -74,13 +74,13 @@ sh scripts/workflow/benchmark/init.sh
 # export BENCHMARK_PATH=src/server/benchmarks/luau/table
 # sh scripts/workflow/benchmark/init.sh
 
-# export BENCHMARK_PATH=src/server/benchmarks/luau/tostring
-# sh scripts/workflow/benchmark/init.sh
+export BENCHMARK_PATH=src/server/benchmarks/luau/tostring
+sh scripts/workflow/benchmark/init.sh
 
-# export BENCHMARK_PATH=src/server/benchmarks/luau/type
-# sh scripts/workflow/benchmark/init.sh
+export BENCHMARK_PATH=src/server/benchmarks/luau/type
+sh scripts/workflow/benchmark/init.sh
 
-# export BENCHMARK_PATH=src/server/benchmarks/luau/var
-# sh scripts/workflow/benchmark/init.sh
+export BENCHMARK_PATH=src/server/benchmarks/luau/var
+sh scripts/workflow/benchmark/init.sh
 
 # gh pr create --base main --head "$BRANCH_NAME" --title "$DATA_RELEASE_VERSION" --fill
