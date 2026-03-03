@@ -170,6 +170,7 @@ These areas are considered high value due to how often developers engage with in
 
 short term:
 
+- automate the opening of a pull request for data branches, as well as maybe the automated merging of it should the automated tests pass
 - have it automatically re-run whenever a new test is added, or the roblox client updates
 - build out higher level operation benchmarking, especially around instances
 - add support for run specific benchmarks via workflow, rather than just re-running all (can take ~6 hours currently)
