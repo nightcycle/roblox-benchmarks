@@ -5,8 +5,32 @@ echo ""
 echo "Running benchmark"
 
 SOLVE_SUMMARY=false
-if [ "$1" = "--summarize" ]; then
-	SOLVE_SUMMARY=true
+
+# iterate through args for --summarize
+for arg in "$@"; do
+	case $arg in
+	--summarize)
+	  SOLVE_SUMMARY=true
+	  shift # Remove --summarize from processing
+	  ;;
+	*)
+	  # Unknown option, you can handle it here if needed
+	  ;;
+  esac
+done
+
+# if $1 is not --summarize then set "BENCHMARK_PATH" to $1
+if [ "$1" != "--summarize" ]; then
+	BENCHMARK_PATH="$1"
+	export BENCHMARK_PATH
+	echo "Using benchmark path: $BENCHMARK_PATH"
+fi
+
+if [ -f .env ]; then
+  echo "Loading environment variables from .env file"
+  export "$(grep -v '^#' .env | xargs)"
+else
+  echo "No .env file found, skipping environment variable loading"
 fi
 
 : "${DATA_RELEASE_VERSION:?'arg 1, DATA_RELEASE_VERSION, is not set'}"

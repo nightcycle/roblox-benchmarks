@@ -1,6 +1,13 @@
 #!/bin/sh
 set -e
 
+if [ -f .env ]; then
+  echo "Loading environment variables from .env file"
+  export "$(grep -v '^#' .env | xargs)"
+else
+  echo "No .env file found, skipping environment variable loading"
+fi
+
 rokit install
 
 lune setup
@@ -14,5 +21,3 @@ gh --version # restart your terminal if this errors, otherwise check that C:\Pro
 git submodule update --init --recursive
 
 sh scripts/build/init.sh
-
-file-util run

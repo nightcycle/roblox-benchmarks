@@ -4,42 +4,185 @@ A set of luau benchmarks for operations, helping developers understand where the
 
 ## data
 
-You can access the data [here](https://github.com/nightcycle/roblox-benchmarks-data), it gets automatically updated when the rbx client updates. All benchmarks use picoseconds to allow their storage as integers, I usually convert them to microseconds when visualizing them.
+You can access the most recent data [here](https://github.com/nightcycle/roblox-benchmarks-data), as well as engage with it in a more useful form via the dashboard [here](https://nightcycle.github.io/roblox-benchmarks/).
+
+## benchmarking process
+
+### 1. Defining a Benchmark
+
+A module is created by a developer defining some operation they wish to benchmark.
+
+```lua
+--!strict
+local Benchmark = require(game.ReplicatedStorage.Shared.Benchmark)
+return Benchmark.new(
+  {
+    Benchmark.Parameter.Float.new("x"), -- can be futher configured / replaced to give more specific inputs
+    Benchmark.Parameter.Float.new("y"), -- instance parameters are supported via "Custom", all instances created are destroyed after the test is run
+  },
+  function(x: number, y: number) -- actual test, return does nothing but I didn't want to skew with assigning a variable
+    return math.noise(x, y)
+  end,
+  150000, -- repeats
+  100 -- sample count, h
+)
+```
+
+If you think the parameter system is cool, check out [nightcycle/simple-test](https://github.com/nightcycle/simple-test) for a more realized version of it with permutation support, bundled in a lightweight unit testing wally package designed to make CI/CD unit testing easier.
+
+### 2. Triggering GitHub Action
+
+Ideally, this will be triggered automatically when the Roblox engine or benchmarking system updates - but for now we just dispatch it manually. If a new directory has been added (or you suspect things will take longer than the 300s limited by github actions for the entire existing directory) update `scripts/workflow/benchmark/all.sh`
+
+### 3. Test is Run
+
+The workflow builds an rbxl using `scripts/build/init.sh` then publishes it.
+
+From there, it runs a series of luau execution sessions (currently 50x). This is because the actual performance of the server will vary between calls, so a lot of work has to go into un-skewing benchmarks to be generalizable. As most of your players likely won't be enjoying your game from a server farm, **these benchmarks ought to be used for their comparative value (X is faster than Y) rather than as an exact speed (X takes 20 microseconds)**.
+
+The runs are then appended to a .csv with the respective path name. It includes the parameters used (serialized within reason) per sample, the duration, as well as various bits of metadata regarding the run itself.
+
+### 4. Summarizing
+
+After all the benchmark running is done, a data processing script at `scripts/workflow/benchmark/summarize.lune.luau` is run via lune. It constructs a high level summary at [src/summary.csv](https://github.com/nightcycle/roblox-benchmarks-data/blob/main/src/summary.csv) of the benchmarks for people who want a portable version, as well as a currently ~40mb version which dumps all the data into a single csv at [src/all.csv](https://github.com/nightcycle/roblox-benchmarks-data/blob/main/src/all.csv).
+
+### 5. Data is Committed to a new Branch
+
+After each successful test, it commits the data to the branch specified at dispatch.
+
+### 6. Branch is Merged into Main
+
+After the run is successful, a pull request is made (currently manually by a human) and merged into the main branch if everything looks good.
+
+### 7. Dashboard Updates
+
+The [dashboard](https://nightcycle.github.io/roblox-benchmarks/), which highlights our most interesting findings, is powered primarily off the raw text of [all.csv](https://github.com/nightcycle/roblox-benchmarks-data/blob/main/src/all.csv). It can take a few minutes, but it *should* update automatically when the file changes.
 
 ## development
 
-### initialization
+### setting up
 
-to run it locally:
+things to know if you want to contribute
 
-- run `sh scripts/init.sh` to setup the dev env, it will boot up a local server allowing you to write files to your os. Use `ctrl+c` in terminal to kill it when you're done or close the terminal.
-- feel free to sync via `rojo serve` in a new terminal window
-- use a form of [hoarcekat](https://github.com/Kampfkarren/hoarcekat) to run `ServerScriptService/server/run/run.story`
+- running code in the vscode bash terminal
+- basic fluency with bash scripts, rojo, and rokit
+- familiarity with roblox cloud APIs
+
+tools you need to install to run `init.sh` (currently only windows only):
+
+- [rokit](https://github.com/rojo-rbx/rokit)
+- [chocolatey](https://chocolatey.org/install)
+
+tools added by init.sh (you will have to install manually if not windows):
+
+- all tools under rokit.toml
+- jq
+- gh
+- git
+
+you will also need to create a `.env` file with the following keys:
+
+```toml
+RBX_API_KEY="your luau execution and place publishing open cloud api key here"
+```
+
+you may also override any default keys in the `.env` file.
+
+### building
+
+to convert this project into an rbxl you can run `sh scripts/build/init.sh` which will by default build it to `build.rbxl`. You can then connect to it via [rojo](https://github.com/rojo-rbx/rojo) with `rojo serve`
+
+### running
+
+#### in cloud
+
+you can run a directory of benchmarks with `sh scripts/workflow/benchmark/init.sh "$BENCHMARK_PATH"`. For example you could run the [noise benchmarks](https://github.com/nightcycle/roblox-benchmarks/tree/main/src/server/benchmarks/luau/math/noise) with:
+
+```sh
+sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/math/noise"
+```
+
+it will build, deploy, and run the benchmarks. The results will then be written to the respective path under the `data` submodule
+
+if you want to update `summary.csv` or `all.csv`, simply put `--sumarize` at the end of the call. In this case:
+
+```sh
+sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/math/noise" --summarize
+```
+
+the full workflow is currently triggered by a dispatch github action, with the data created in another branch. If you want general runs to catch a new test, you may need to add it under `scripts/workflow/benchmark/all.sh` in the relevant spot. These are all listed out manually to allow for easier tuning.
+
+#### locally
+
+you can run benchmarks directly on your machine (helpful for debugging issues live). Currently it runs off of [hoarcekat](https://github.com/Kampfkarren/hoarcekat) combined with [file-util](https://github.com/nightcycle/file-util) (a basic io server tool in desperate need of a remake, currently windows only).
+
+1. in the terminal call `file-util run` to start the server.
+2. edit the [boot.story module](https://github.com/nightcycle/roblox-benchmarks/blob/main/src/shared/Main/boot.story.luau) to target whatever directory you're interested in
+3. run the story using hoarcekat
+
+this workflow is not used as frequently now that the bulk of the core internals have stabilized, so it might fall out of date over time.
 
 ### contributing
 
-some basic rules:
+#### guidelines
 
-- you can only have 1 test per module
+- only return 1 test per script
 - keep the names lower kebab case
-- all _G usage must be run through the `src/shared/ENV.luau` module for type safety
+- all _G usage must be run through the `src/shared/ENV.luau` module for type safety.
 - all tests must be strictly typed
 - new parameters shouldn't generate tuples, makes unpacking / repacking weird
 - to keep the stack simple we're avoiding adding wally for now
 
-### goals
+#### benchmark bounties
+
+These areas are considered high value due to how often developers engage with in high performance systems.
+
+##### libraries
+
+- buffer
+- bit32
+- table
+
+##### types
+
+- Noise
+- CFrame
+- NumberRange
+- Ray
+- Region3
+- ColorSequence
+- NumberSequence
+
+##### instances
+
+- any EditableImage methods
+- any EditableMesh methods
+- workspace:BulkMoveTo vs other move methods
+- Instance construction / destruction methods (clone, debris, etc)
+
+#### services
+
+- HttpService:JSONEncode, JSONDecode, and GenerateGUID
+- EncodingService
+-
+
+#### goals
 
 short term:
 
-- make this publicly information accessible
 - have it automatically re-run whenever a new test is added, or the roblox client updates
-- build out higher level operation benchmarking
+- build out higher level operation benchmarking, especially around instances
+- add support for run specific benchmarks via workflow, rather than just re-running all (can take ~6 hours currently)
 
 long term:
 
-- decouple the parameter generator + build a unit test system off of it
-- dashboards / data visualizations
-- create a progress dashboard aiming for the benchmarking of every luau and engine API
-- a tool that analyzes a codeblock and estimates runtime from recognized patterns
-- darklua style cli tool that applies known optimizations (maybe just a fork? not sure)
+- create a progress dashboard aiming for the benchmarking of every luau and engine API - maybe even a [Roblox API Ref](https://robloxapi.github.io/ref/index.html) style library
+- benchmark various performance minded open source packages, such as [rbx-bufferize](https://github.com/EgoMoose/rbx-bufferize), [msgpack-luau](https://github.com/cipharius/msgpack-luau), and [noise](https://github.com/nightcycle/noise).
+- compile a list of 0 downsides optimizations any developer can make immediately with a copy / paste
+- flesh out support for running on specific devices
+- explore options to make the dashboard creation process more collaborative
 
+spin-off projects:
+
+- a tool that analyzes a codeblock and estimates runtime from recognized patterns - maybe a selene contribution / fork?
+- darklua style cli tool that applies known optimizations (maybe just a fork? not sure)

@@ -96,6 +96,18 @@
 		"lints": true,
 		"types": true,
 	},
+	"terminal.integrated.env.windows": {
+		"DATA_SUBMODULE_PATH": "data",
+		"DATA_DIR_PATH": "src"
+	},
+	"terminal.integrated.env.linux": {
+		"DATA_SUBMODULE_PATH": "data",
+		"DATA_DIR_PATH": "src"
+	},
+	"terminal.integrated.env.osx": {
+		"DATA_SUBMODULE_PATH": "data",
+		"DATA_DIR_PATH": "src"
+	},
 	"stylua.targetReleaseVersion": "latest",
 	"luau-lsp.sourcemap.autogenerate": true,
 	"luau-lsp.diagnostics.workspace": true,
@@ -103,8 +115,5 @@
 	"[luau]": {
 		"editor.defaultFormatter": "JohnnyMorganz.stylua"
 	},
-	"secrets.enabledFolders": [
-		"roblox-benchmark",
-		"roblox-benchmark"
-	],
+	"secrets.enabledFolders": [],
 }
