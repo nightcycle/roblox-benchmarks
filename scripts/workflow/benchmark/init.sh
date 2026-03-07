@@ -6,6 +6,11 @@ echo "Running benchmark"
 
 SOLVE_SUMMARY=false
 
+if [ "$1" != "--summarize" ]; then
+	BENCHMARK_PATH="$1"
+	export BENCHMARK_PATH
+	echo "Using benchmark path: $BENCHMARK_PATH"
+fi
 # iterate through args for --summarize
 for arg in "$@"; do
 	case $arg in
@@ -18,13 +23,8 @@ for arg in "$@"; do
 	  ;;
   esac
 done
+echo "summarize?: $SOLVE_SUMMARY"
 
-# if $1 is not --summarize then set "BENCHMARK_PATH" to $1
-if [ "$1" != "--summarize" ]; then
-	BENCHMARK_PATH="$1"
-	export BENCHMARK_PATH
-	echo "Using benchmark path: $BENCHMARK_PATH"
-fi
 
 if [ -f .env ]; then
   echo "Loading environment variables from .env file"

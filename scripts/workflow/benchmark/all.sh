@@ -49,6 +49,7 @@ if [ -z "$BENCHMARK_FILTER" ]; then
   sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/type"
   sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/var" --summarize
 else
+  echo "running '$BENCHMARK_FILTER'"
   if [ -d "$DATA_SUBMODULE_PATH/$DATA_DIR_PATH/$BENCHMARK_FILTER" ]; then
     rm -rf "$DATA_SUBMODULE_PATH/$DATA_DIR_PATH/$BENCHMARK_FILTER"
   fi
