@@ -27,6 +27,9 @@ inputs:
   data-dir-path:
     description: the path within the data submodule to upload the benchmark results to
     required: true
+  benchmark-filter:
+    description: the path provided to determine which benchmarks to run
+    required: false
 runs:
   using: "composite"
   steps:
@@ -66,4 +69,5 @@ runs:
         export DATA_SUBMODULE_PATH=${{ inputs.data-submodule-path }}
         export DATA_DIR_PATH=${{ inputs.data-dir-path }}
         export GH_TOKEN=${{ inputs.data-update-token }}
+        export BENCHMARK_FILTER=${{ inputs.benchmark-filter }}
         sh scripts/workflow/benchmark/all.sh ${{ inputs.data-release-version }} ${{ inputs.run-count }}

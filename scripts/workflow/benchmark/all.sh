@@ -25,28 +25,36 @@ fi
 cd ..
 
 sh scripts/workflow/benchmark/pull.sh
-sh scripts/workflow/benchmark/reset.sh
+if [ -z "$BENCHMARK_FILTER" ]; then
+  sh scripts/workflow/benchmark/reset.sh
+  sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/math/noise"
+  sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/math/sqrt"
+  sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/math/constrain"
+  sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/math/operations/add"
+  sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/math/operations/bool"
+  sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/math/operations/divide"
+  sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/math/operations/mod"
+  sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/math/operations/multiply"
+  sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/math/operations/subtract"
+  sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/math/rounding"
+  sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/types/brickcolor"
+  sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/types/color3"
+  sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/types/rect"
+  sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/types/vector2"
+  sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/types/vector3"
+  sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/function"
+  sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/loop"
+  sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/table"
+  sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/tostring"
+  sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/type"
+  sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/var" --summarize
+else
+  if [ -d "$DATA_SUBMODULE_PATH/$DATA_DIR_PATH/$BENCHMARK_FILTER" ]; then
+    rm -rf "$DATA_SUBMODULE_PATH/$DATA_DIR_PATH/$BENCHMARK_FILTER"
+  fi
+  sh scripts/workflow/benchmark/init.sh "$BENCHMARK_FILTER" --summarize
+fi
 
-sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/math/noise"
-sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/math/sqrt"
-sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/math/constrain"
-sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/math/operations/add"
-sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/math/operations/bool"
-sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/math/operations/divide"
-sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/math/operations/mod"
-sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/math/operations/multiply"
-sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/math/operations/subtract"
-sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/math/rounding"
-sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/types/brickcolor"
-sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/types/color3"
-sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/types/rect"
-sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/types/vector2"
-sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/types/vector3"
-sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/function"
-sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/loop"
-sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/table"
-sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/tostring"
-sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/type"
-sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/var" --summarize
+
 
 # gh pr create --base main --head "$BRANCH_NAME" --title "$DATA_RELEASE_VERSION" --fill

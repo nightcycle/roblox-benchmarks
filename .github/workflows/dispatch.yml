@@ -6,6 +6,10 @@ on:
       data-release-version:
         description: "the release version for the data"
         required: true
+
+      benchmark-filter:
+        description: "benckmark path to run, defaults to all"
+        required: false
 jobs:
   dispatch:
     runs-on: ubuntu-latest
@@ -24,3 +28,4 @@ jobs:
           data-update-token: ${{ secrets.DATA_UPDATE_TOKEN }}
           data-submodule-path: ${{ vars.DATA_SUBMODULE_PATH }}
           data-dir-path: ${{ vars.DATA_DIR_PATH }}
+          benchmark-filter: ${{ github.event.inputs.benchmark-filter }}
