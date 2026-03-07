@@ -32,7 +32,7 @@ If you think the parameter system is cool, check out [nightcycle/simple-test](ht
 
 ### 2. Triggering GitHub Action
 
-Ideally, this will be triggered automatically when the Roblox engine or benchmarking system updates - but for now we just dispatch it manually. If a new directory has been added (or you suspect things will take longer than the 300s limited by github actions for the entire existing directory) update `scripts/workflow/benchmark/all.sh`
+Ideally, this will be triggered automatically when the Roblox engine or benchmarking system updates - but for now we just dispatch it manually. If a new directory has been added (or you suspect things will take longer than the 300s limited by github actions for the entire existing directory) update `scripts/workflow/benchmark/all.sh`. If you provide a `benchmark-filter` it will target those directly, allowing for the adding of new benchmarks to datasets without re-running the entire dataset.
 
 ### 3. Test is Run
 
@@ -173,7 +173,6 @@ short term:
 - automate the opening of a pull request for data branches, as well as maybe the automated merging of it should the automated tests pass
 - have it automatically re-run whenever a new test is added, or the roblox client updates
 - build out higher level operation benchmarking, especially around instances
-- add support for run specific benchmarks via workflow, rather than just re-running all (can take ~6 hours currently)
 
 long term:
 
