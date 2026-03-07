@@ -80,6 +80,11 @@ function Runner.new(target: ModuleScript): Runner
 
 			local testStart = os.clock()
 			local benchmark = self:load()
+
+			for i, param in benchmark.Parameters do
+				Benchmark.Parameter.Any.hydrate(param)
+			end
+
 			local data: { Sample } = {}
 
 			local sampleParameters = table.create(benchmark.Samples)
@@ -108,10 +113,6 @@ function Runner.new(target: ModuleScript): Runner
 				local stopTime = os.clock()
 				local elapsed = (stopTime - startTime)
 				local normalized = math.ceil((elapsed / benchmark.Repeats) * 1_000_000_000_000) -- pico seconds
-				-- assert(
-				-- 	normalized > baseline,
-				-- 	`target "{self.Target:GetFullName()}" ran in ({normalized} picoseconds) which is less than a run doing nothing ({baseline} picoseconds). increase the number of repeats for such a low-level benchmark`
-				-- )
 				return {
 					Inputs = { ... },
 					Elapsed = normalized,
@@ -125,14 +126,11 @@ function Runner.new(target: ModuleScript): Runner
 				local params = sampleParameters[sample]
 				data[sample] = run(table.unpack(params :: any, 1, #benchmark.Parameters))
 			end
-			Logger.log(`\tsolve - summarizing {target:GetFullName()}`)
-			for i, v in sampleParameters do
-				if typeof(v) == "Instance" then
-					pcall(function(...)
-						v:Destroy()
-					end)
-				end
+			Logger.log(`\tclean - cleaning up cached params`)
+			for i, param in benchmark.Parameters do
+				Benchmark.Parameter.Any.clean(param)
 			end
+			Logger.log(`\tsolve - summarizing {target:GetFullName()}`)
 			do
 				local testStop = os.clock()
 				Logger.log(`\tsolve - finished {target:GetFullName()} in {testStop - testStart}s`)

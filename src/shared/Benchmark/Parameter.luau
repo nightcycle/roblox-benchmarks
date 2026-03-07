@@ -1,10 +1,12 @@
 --!strict
+local AssetService = game:GetService("AssetService")
 -- Services
 -- Packages
 -- Modules
 -- Types
 -- Constants
 local CONSTANTS = require(game.ReplicatedStorage.Shared.CONSTANTS)
+local HYDRATION_CACHE_KEY = "_HydratedItem"
 -- Variables
 -- References
 -- Private Functions
@@ -27,6 +29,8 @@ export type Parameter =
 	| Color3Parameter
 	| BrickColorParameter
 	| CustomParameter
+	| EditableImageParameter
+	| EnumItemParameter
 
 type CustomParameter = {
 	read Key: string,
@@ -217,6 +221,25 @@ Parameter.Literal = {
 	generate = function(param: LiteralParameter, rng: Random): string
 		local index = rng:NextInteger(1, #param.Values)
 		return param.Values[index]
+	end :: (any, Random) -> string,
+}
+
+type EnumItemParameter = {
+	read Key: string,
+	read Type: "EnumItem",
+	read Enum: Enum,
+}
+Parameter.EnumItem = {
+	new = function(key: string, enum: Enum): EnumItemParameter
+		return {
+			Key = key,
+			Type = "EnumItem",
+			Enum = enum,
+		}
+	end,
+	generate = function(param: EnumItemParameter, rng: Random): string
+		local index = rng:NextInteger(1, #param.Enum:GetEnumItems())
+		return param.Enum:GetEnumItems()[index]
 	end :: (any, Random) -> string,
 }
 
@@ -427,13 +450,59 @@ Parameter.Static = {
 	end :: (any, Random) -> any?,
 }
 
+-- not really something to mass generate due to mem limits
+type EditableImageParameter = {
+	read Key: string,
+	read Type: "EditableImage",
+	read Size: Vector2,
+	[typeof(HYDRATION_CACHE_KEY)]: EditableImage?,
+}
+Parameter.EditableImage = {
+	new = function(key: string, size: Vector2?): EditableImageParameter
+		return {
+			Key = key,
+			Type = "EditableImage" :: "EditableImage",
+			Size = size or Vector2.one * 512,
+		}
+	end,
+	hydrate = function(param: EditableImageParameter)
+		assert(param[HYDRATION_CACHE_KEY] == nil, `param "{param.Key}" already hydrated`)
+		param[HYDRATION_CACHE_KEY] = AssetService:CreateEditableImage({
+			Size = param.Size,
+		})
+	end,
+	generate = function(param: EditableImageParameter, rng: Random)
+		assert(param[HYDRATION_CACHE_KEY], `param "{param.Key}" not hydrated`)
+		return param[HYDRATION_CACHE_KEY]
+	end :: (any, Random) -> EditableImage,
+	clean = function(param: EditableImageParameter)
+		local editableImage = param[HYDRATION_CACHE_KEY]
+		assert(editableImage, `bad editable image`)
+		editableImage:Destroy()
+	end,
+}
+
 Parameter.Any = {}
 Parameter.Any.new = function(): Parameter
 	error("Parameter.Any cannot be instantiated directly")
 end
+Parameter.Any.hydrate = function(param: Parameter): ()
+	local solver = Parameter[param.Type]
+	assert(solver ~= nil, `bad solver: "{param.Type}"`)
+	if solver.hydrate then
+		solver.hydrate(param)
+	end
+end
+Parameter.Any.clean = function(param: Parameter): ()
+	local solver = Parameter[param.Type]
+	assert(solver ~= nil, `bad solver: "{param.Type}"`)
+	if solver.clean then
+		solver.clean(param)
+	end
+end
 Parameter.Any.generate = function(param: Parameter, rng: Random): any?
 	local solver = Parameter[param.Type]
-	assert(solver, `bad solver: "{param.Type}"`)
+	assert(solver ~= nil, `bad solver: "{param.Type}"`)
 	return solver.generate(param, rng)
 end :: (any, Random) -> any?
 

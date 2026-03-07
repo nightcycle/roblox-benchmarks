@@ -18,7 +18,7 @@ local Benchmark = require(game.ReplicatedStorage.Shared.Benchmark)
 return Benchmark.new(
   {
     Benchmark.Parameter.Float.new("x"), -- can be futher configured / replaced to give more specific inputs
-    Benchmark.Parameter.Float.new("y"), -- instance parameters are supported via "Custom", all instances created are destroyed after the test is run
+    Benchmark.Parameter.Float.new("y"),
   },
   function(x: number, y: number) -- actual test, return does nothing but I didn't want to skew with assigning a variable
     return math.noise(x, y)
@@ -164,7 +164,6 @@ These areas are considered high value due to how often developers engage with in
 
 - HttpService:JSONEncode, JSONDecode, and GenerateGUID
 - EncodingService
--
 
 #### goals
 
