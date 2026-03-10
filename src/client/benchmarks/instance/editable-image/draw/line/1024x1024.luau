@@ -31,5 +31,5 @@ return Benchmark.new(
 		return image:DrawLine(start, finish, color, transparency, imageCombineType)
 	end :: any,
 	10,
-	10_000
+	1_000
 )

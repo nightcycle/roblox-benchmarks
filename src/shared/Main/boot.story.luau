@@ -7,15 +7,21 @@ local ENV = require(game.ReplicatedStorage.Shared.ENV)
 local PathUtil = require(game.ReplicatedStorage.Shared.PathUtil)
 -- Types
 -- Constants
+local MAX_RUNS = 10
 -- Variables
 -- References
 -- Private Functions
 -- Class
 return function()
-	local target = game.ServerScriptService.Server.benchmarks.luau.loop["for"]
+	local target = game.ReplicatedStorage.Client.benchmarks
 	local path = PathUtil.toPath(target)
 	ENV.FILTER_PATH = path
-	local thr = task.spawn(Parent)
+	local thr = task.spawn(function()
+		for i = 1, MAX_RUNS do
+			ENV.RUNNER_INDEX = i
+			Parent()
+		end
+	end)
 	return function()
 		task.cancel(thr)
 	end
