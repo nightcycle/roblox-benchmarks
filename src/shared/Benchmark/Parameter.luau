@@ -477,6 +477,7 @@ Parameter.EditableImage = {
 	end :: (any, Random) -> EditableImage,
 	clean = function(param: EditableImageParameter)
 		local editableImage = param[HYDRATION_CACHE_KEY]
+		param[HYDRATION_CACHE_KEY] = nil
 		assert(editableImage, `bad editable image`)
 		editableImage:Destroy()
 	end,
