@@ -7,6 +7,7 @@ local ENV = require(game.ReplicatedStorage.Shared.ENV)
 -- Types
 -- Constants
 -- Variables
+local gaveWarning = false
 -- References
 -- Private Functions
 function getFinalPath(path: string): string
@@ -22,9 +23,13 @@ local Util = {}
 
 function Util.newSession()
 	if ENV.IS_DEBUG then
-		if FileUtil.Path.getIfExists(ENV.DATA_DIR) then
-			FileUtil.run(`rm -rf "{ENV.DATA_DIR}"`)
+		if not gaveWarning then
+			warn("data directory is no longer automatically cleared in debug mode, please clear it manually if needed")
+			gaveWarning = true
 		end
+		-- if FileUtil.Path.getIfExists(ENV.DATA_DIR) then
+		-- 	FileUtil.run(`rm -rf "{ENV.DATA_DIR}"`)
+		-- end
 	else
 		table.clear(ENV.AGENT_OUTPUT.raw)
 	end
