@@ -6,6 +6,13 @@ A set of luau benchmarks for operations, helping developers understand where the
 
 You can access the most recent data [here](https://github.com/nightcycle/roblox-benchmarks-data), as well as engage with it in a more useful form via the dashboard [here](https://nightcycle.github.io/roblox-benchmarks/).
 
+## acknowledgements
+
+A quick moment to acknowledge some of the shoulders of giants I stand on:
+
+- [Benchmarker](https://boatbomber.itch.io/benchmarker) by @boatbomber, which largely introduced formal benchmarking to Roblox Devs, including myself. Many high level implementation decisions were informed by my experiences with his excellent plugin.
+- [rstest](https://docs.rs/rstest/latest/rstest/) which introduced me to the concept of defining parameters for embedded tests and inspired the actual structure of the benchmarks
+
 ## benchmarking process
 
 ### 1. Defining a Benchmark
