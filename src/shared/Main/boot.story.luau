@@ -8,7 +8,7 @@ local PathUtil = require(game.ReplicatedStorage.Shared.PathUtil)
 local FileUtil = require(game.ReplicatedStorage.Shared.SaveUtil.FileUtil)
 -- Types
 -- Constants
-local MAX_RUNS = 10
+local MAX_RUNS = 5
 -- Variables
 -- References
 -- Private Functions
@@ -19,6 +19,7 @@ return function()
 	ENV.FILTER_PATH = path
 	local thr = task.spawn(function()
 		for i = 1, MAX_RUNS do
+			print(`starting benchmark run {i} of {MAX_RUNS}...`)
 			ENV.RUNNER_INDEX = i
 			Parent()
 		end
