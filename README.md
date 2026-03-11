@@ -147,7 +147,6 @@ These areas are considered high value due to how often developers engage with in
 ##### libraries
 
 - buffer
-- bit32
 - table
 
 ##### types
