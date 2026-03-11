@@ -170,23 +170,31 @@ These areas are considered high value due to how often developers engage with in
 - HttpService:JSONEncode, JSONDecode, and GenerateGUID
 - EncodingService
 
-#### goals
+#### roadmap
 
-short term:
+v0.4:
 
-- automate the opening of a pull request for data branches, as well as maybe the automated merging of it should the automated tests pass
-- have it automatically re-run whenever a new test is added, or the roblox client updates
-- build out higher level operation benchmarking, especially around instances
+- improve coverage of tostring support across types, especially around including size metadata when it's not directly serializable.
+- create localized versions of `all.csv` for tests with matching parameters to be parsed together with the parameter columns included.
 
-long term:
+v0.5:
 
-- create a progress dashboard aiming for the benchmarking of every luau and engine API - maybe even a [Roblox API Ref](https://robloxapi.github.io/ref/index.html) style library
+- add permutation benchmark logic for generating new test benchmarks off of params (for example, definining a single draw-line benchmark that is then permuted into every viable canvas size)
+- add an optional "reject param combo" step to allow for bad combinations to be rejected
+- add a parameter that has the prior parameters passed into it
+- split the parameter module into sub-modules
+
+v0.6:
+
 - benchmark various performance minded open source packages, such as [rbx-bufferize](https://github.com/EgoMoose/rbx-bufferize), [msgpack-luau](https://github.com/cipharius/msgpack-luau), and [noise](https://github.com/nightcycle/noise).
+- automate the opening of a pull request for data branches, as well as maybe the automated merging of it should the automated tests pass
+- have it automatically re-run whenever a new test is added + checks pass, or the roblox client / packe updates
+
+v0.7:
+
+- boot the power bi dashboard off of a `.pbip` file to allow others to contribute
+- create a coverage dashboard aiming for every luau and engine API - maybe even a [Roblox API Ref](https://robloxapi.github.io/ref/index.html) style library
+
+v0.8:
+
 - compile a list of 0 downsides optimizations any developer can make immediately with a copy / paste
-- flesh out support for running on specific devices
-- explore options to make the dashboard creation process more collaborative
-
-spin-off projects:
-
-- a tool that analyzes a codeblock and estimates runtime from recognized patterns - maybe a selene contribution / fork?
-- darklua style cli tool that applies known optimizations (maybe just a fork? not sure)
