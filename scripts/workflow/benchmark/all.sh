@@ -38,6 +38,7 @@ if [ -z "$BENCHMARK_FILTER" ]; then
   sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/math/operations/subtract"
   sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/math/rounding"
   sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/bit32"
+  sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/luau/buffer"
   sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/types/brickcolor"
   sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/types/color3"
   sh scripts/workflow/benchmark/init.sh "src/server/benchmarks/types/rect"

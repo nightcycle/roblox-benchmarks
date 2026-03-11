@@ -88,6 +88,33 @@ Parameter.Integer = {
 	end :: (any, Random) -> number,
 }
 
+type BufferParameter = {
+	read Key: string,
+	read Type: "Buffer",
+	read MinLength: number?,
+	read MaxLength: number?,
+}
+Parameter.Buffer = {
+	new = function(key: string, minLength: number?, maxLength: number?): BufferParameter
+		return {
+			Key = key,
+			Type = "Buffer",
+			MinLength = minLength,
+			MaxLength = maxLength,
+		}
+	end,
+	generate = function(param: BufferParameter, rng: Random): buffer
+		local minLength = math.max(param.MinLength or 1, 1)
+		local maxLength = math.max(minLength, param.MaxLength or CONSTANTS.DEFAULT_BUFFER_SIZE_BYTES)
+		local length = rng:NextInteger(minLength, maxLength)
+		local b = buffer.create(length)
+		for i = 0, length - 1 do
+			buffer.writeu8(b, i, rng:NextInteger(0, 255))
+		end
+		return b
+	end :: (any, Random) -> buffer,
+}
+
 type FloatParameter = {
 	read Key: string,
 	read Type: "Float",

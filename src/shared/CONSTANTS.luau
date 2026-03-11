@@ -5,6 +5,7 @@ local CONSTANTS = {
 	DEFAULT_TABLE_SIZE = 250_000,
 	DEFAULT_SAMPLES = 10_000, -- how many times the benchmark is run
 	DEFAULT_REPEATS = 100, -- how many times to re-run with the same parameters
+	DEFAULT_BUFFER_SIZE_BYTES = 1024, --1kb
 	PAUSE_EVERY_N_SAMPLES = 10, -- how many iterations to run before yielding to a new thread
 	DEFAULT_STRING_LENGTH = 32,
 }
