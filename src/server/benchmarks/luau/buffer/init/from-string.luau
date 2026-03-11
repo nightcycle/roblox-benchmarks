@@ -14,7 +14,7 @@ return Benchmark.new(
 		Benchmark.Parameter.String.new("str", 1, CONSTANTS.DEFAULT_BUFFER_SIZE_BYTES),
 	},
 	function(str: string)
-		return buffer.fromString(str)
+		return buffer.fromstring(str)
 	end :: any,
 	10_000,
 	100
