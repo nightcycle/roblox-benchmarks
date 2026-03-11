@@ -14,7 +14,7 @@ return Benchmark.new(
 		Benchmark.Parameter.Integer.new("disp", 0, 31),
 	},
 	function(x: number, disp: number)
-		return bit32.irotate(x, disp)
+		return bit32.lrotate(x, disp)
 	end :: any,
 	250_000,
 	100
