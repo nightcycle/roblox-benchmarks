@@ -5,7 +5,7 @@
 local Benchmark = require(game.ReplicatedStorage.Shared.Benchmark)
 -- Types
 -- Constants
-local SIZE = 1024
+local SIZE = 64
 local HALF_SIZE = SIZE / 2
 -- Variables
 -- References
@@ -13,7 +13,7 @@ local HALF_SIZE = SIZE / 2
 -- Class
 return Benchmark.new(
 	{
-		Benchmark.Parameter.EditableImage.new("image", Vector2.one * SIZE),
+		Benchmark.Parameter.EditableImage.new("image"),
 		Benchmark.Parameter.Vector2.new("Start", Vector2.one, Vector2.one * HALF_SIZE, Vector2.one),
 		Benchmark.Parameter.Vector2.new("Finish", Vector2.one * (HALF_SIZE + 1), Vector2.one * SIZE, Vector2.one),
 		Benchmark.Parameter.Color3.new("Color3"),
@@ -30,6 +30,6 @@ return Benchmark.new(
 	)
 		return image:DrawLine(start, finish, color, transparency, imageCombineType)
 	end :: any,
-	10,
-	1_000
+	20,
+	10_000
 )
