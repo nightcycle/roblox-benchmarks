@@ -154,7 +154,7 @@ function Runner.new(target: ModuleScript): Runner
 							}
 							for i, param in self.Benchmark:flatten() do
 								local paramValue = data.Inputs[i]
-								local str = tostring(paramValue):gsub(",", ";") -- escape commas
+								local str = Benchmark.Parameter.Any.tostring(param, paramValue):gsub(",", ";") -- escape commas
 								table.insert(row, str)
 							end
 							table.insert(rows, table.concat(row, ","))

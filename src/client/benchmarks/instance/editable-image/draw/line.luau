@@ -5,6 +5,7 @@
 local Benchmark = require(game.ReplicatedStorage.Shared.Benchmark)
 -- Types
 -- Constants
+local CONSTANTS = require(game.ReplicatedStorage.Shared.CONSTANTS)
 -- Variables
 -- References
 -- Private Functions
@@ -13,20 +14,18 @@ return Benchmark.new(
 	{
 		Benchmark.Parameter.Tuple.new({
 			Benchmark.Parameter.EditableImage.new("image"),
-			Benchmark.Parameter.Vector2.new("Start"),
-			Benchmark.Parameter.Vector2.new("Finish"),
+			Benchmark.Parameter.Vector2.new("Start", Vector2.one, Vector2.one * CONSTANTS.MAX_EDITABLE_IMAGE_DIM),
+			Benchmark.Parameter.Vector2.new("Finish", Vector2.one, Vector2.one * CONSTANTS.MAX_EDITABLE_IMAGE_DIM),
 		}, function(image: EditableImage, start: Vector2, finish: Vector2)
+			start = Vector2.max(Vector2.min(image.Size - Vector2.one, start), Vector2.one):Ceil()
+			finish = Vector2.max(Vector2.min(image.Size - Vector2.one, finish), Vector2.one):Ceil()
 			if start == finish then
-				if finish == image.Size then
-					finish = Vector2.one:Max(finish - Vector2.one)
+				if start == image.Size - Vector2.one then
+					start -= Vector2.one
 				else
-					finish = image.Size:Min(finish + Vector2.one)
+					start = Vector2.min(image.Size - Vector2.one, finish + Vector2.one)
 				end
 			end
-			local max = image.Size:Min(start:Max(finish))
-			local min = Vector2.one:Max(start:Min(finish))
-			start = (start:Max(min)):Min(max)
-			finish = (finish:Max(min)):Min(max)
 			return image, start, finish
 		end),
 		Benchmark.Parameter.Color3.new("Color3"),
@@ -43,6 +42,6 @@ return Benchmark.new(
 	)
 		return image:DrawLine(start, finish, color, transparency, imageCombineType)
 	end :: any,
-	20,
-	10_000
+	1,
+	1_000
 )

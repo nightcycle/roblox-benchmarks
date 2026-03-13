@@ -8,7 +8,7 @@ local PathUtil = require(game.ReplicatedStorage.Shared.PathUtil)
 local FileUtil = require(game.ReplicatedStorage.Shared.SaveUtil.FileUtil)
 -- Types
 -- Constants
-local MAX_RUNS = 5
+local MAX_RUNS = 1
 -- Variables
 -- References
 -- Private Functions

@@ -5,6 +5,7 @@
 local Benchmark = require(game.ReplicatedStorage.Shared.Benchmark)
 -- Types
 -- Constants
+local CONSTANTS = require(game.ReplicatedStorage.Shared.CONSTANTS)
 -- Variables
 -- References
 -- Private Functions
@@ -13,22 +14,20 @@ return Benchmark.new(
 	{
 		Benchmark.Parameter.Tuple.new({
 			Benchmark.Parameter.EditableImage.new("image"),
-			Benchmark.Parameter.Vector2.new("Position"),
-			Benchmark.Parameter.Vector2.new("Size", Vector2.one),
+			Benchmark.Parameter.Vector2.new("Position", Vector2.one, Vector2.one * CONSTANTS.MAX_EDITABLE_IMAGE_DIM),
+			Benchmark.Parameter.Vector2.new("Size", Vector2.one, Vector2.one * CONSTANTS.MAX_EDITABLE_IMAGE_DIM),
 		}, function(image: EditableImage, position: Vector2, size: Vector2)
 			local start = (position - size / 2):Floor()
 			local finish = (position + size / 2):Ceil()
+			start = Vector2.max(Vector2.min(image.Size - Vector2.one * 2, start), Vector2.one * 2):Ceil()
+			finish = Vector2.max(Vector2.min(image.Size - Vector2.one * 2, finish), Vector2.one * 2):Ceil()
 			if start == finish then
-				if finish == image.Size then
-					finish = Vector2.one:Max(finish - Vector2.one)
+				if start == image.Size - Vector2.one * 2 then
+					start -= Vector2.one * 2
 				else
-					finish = image.Size:Min(finish + Vector2.one)
+					start = Vector2.min(image.Size - Vector2.one * 2, finish + Vector2.one * 2)
 				end
 			end
-			local max = image.Size:Min(start:Max(finish))
-			local min = Vector2.one:Max(start:Min(finish))
-			start = (start:Max(min)):Min(max)
-			finish = (finish:Max(min)):Min(max)
 			size = finish - start
 			position = (size * 0.5 + start):Ceil()
 			return image, position, size
@@ -47,6 +46,6 @@ return Benchmark.new(
 	)
 		return image:DrawRectangle(position, size, color, transparency, imageCombineType)
 	end :: any,
-	20,
-	10_000
+	1,
+	1_000
 )
