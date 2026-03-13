@@ -81,7 +81,7 @@ function Runner.new(target: ModuleScript): Runner
 			local testStart = os.clock()
 			local benchmark = self:load()
 
-			for i, param in benchmark.Parameters do
+			for i, param in benchmark:flatten() do
 				Benchmark.Parameter.Any.hydrate(param)
 			end
 
@@ -124,10 +124,10 @@ function Runner.new(target: ModuleScript): Runner
 			Logger.log(`\tsolve - running {count} samples for {target:GetFullName()}`)
 			for sample = 1, count do
 				local params = sampleParameters[sample]
-				data[sample] = run(table.unpack(params :: any, 1, #benchmark.Parameters))
+				data[sample] = run(table.unpack(params :: any, 1, #benchmark:flatten()))
 			end
 			Logger.log(`\tclean - cleaning up cached params`)
-			for i, param in benchmark.Parameters do
+			for i, param in benchmark:flatten() do
 				Benchmark.Parameter.Any.clean(param)
 			end
 			Logger.log(`\tsolve - summarizing {target:GetFullName()}`)
@@ -140,7 +140,7 @@ function Runner.new(target: ModuleScript): Runner
 					exportToCSV = function(self: Overview): string
 						local rows = {}
 						local headers = { "runner.index.n", "runner.baseline.ps", "elapsed.ps", "repeats.n" }
-						for i, param in self.Benchmark.Parameters do
+						for i, param in self.Benchmark:flatten() do
 							table.insert(headers, ("param." .. param.Key .. "." .. param.Type):lower())
 						end
 						table.insert(rows, table.concat(headers, ","))
@@ -152,17 +152,8 @@ function Runner.new(target: ModuleScript): Runner
 								tostring(data.Elapsed),
 								tostring(self.Benchmark.Repeats),
 							}
-							for i, param in self.Benchmark.Parameters do
+							for i, param in self.Benchmark:flatten() do
 								local paramValue = data.Inputs[i]
-								if param.Type == "Array" then
-									paramValue = `array<{param.ValueType.Type:lower()}>[{#(paramValue :: { any })}]`
-								elseif param.Type == "Map" then
-									paramValue =
-										`map<{param.KeyType.Type:lower()},{param.ValueType.Type:lower()}>[{if param.MaxLength
-												and param.MaxLength == param.MinLength
-											then param.MaxLength
-											else ""}]`
-								end
 								local str = tostring(paramValue):gsub(",", ";") -- escape commas
 								table.insert(row, str)
 							end
