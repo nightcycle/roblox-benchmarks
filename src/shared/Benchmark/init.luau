@@ -39,7 +39,7 @@ Benchmark.Parameter = Parameter
 
 function Benchmark.new(parameters: { Parameter }, method: (...any) -> (), repeats: number?, samples: number?)
 	return {
-		Parameters = parameters,
+		_Parameters = parameters,
 		Method = method,
 		Repeats = repeats or CONSTANTS.DEFAULT_REPEATS,
 		Samples = samples or CONSTANTS.DEFAULT_SAMPLES,
