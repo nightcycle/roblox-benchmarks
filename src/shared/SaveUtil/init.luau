@@ -56,7 +56,7 @@ function Util.appendCSV(path: string, rows: string, header: string)
 			FileUtil.makeDirectories(parentDir)
 		end
 		if not FileUtil.Path.getIfExists(filePath) and header then
-			FileUtil.write(filePath, header)
+			FileUtil.write(filePath, header .. "\n")
 		end
 		FileUtil.append(filePath, rows)
 	else
