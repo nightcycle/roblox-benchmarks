@@ -36,10 +36,14 @@ type CustomParameter = {
 	read Key: string,
 	read Type: "Custom",
 	read Method: (Random) -> any?,
-	read ToString: ((CustomParameter) -> string)?,
+	read ToString: ((CustomParameter, value: any) -> string)?,
 }
 Parameter.Custom = {
-	new = function(key: string, method: (Random) -> any?, toString: ((CustomParameter) -> string)?): CustomParameter
+	new = function(
+		key: string,
+		method: (Random) -> any?,
+		toString: ((CustomParameter, value: any) -> string)?
+	): CustomParameter
 		return {
 			Key = key,
 			Type = "Custom",
@@ -50,11 +54,11 @@ Parameter.Custom = {
 	generate = function(param: CustomParameter, rng: Random): any?
 		return param.Method(rng)
 	end :: (any, Random) -> any?,
-	tostring = function(param: CustomParameter): string
+	tostring = function(param: CustomParameter, value: any): string
 		if param.ToString then
-			return param.ToString(param)
+			return param.ToString(param, value)
 		end
-		return string.format("Custom<%s>", param.Key)
+		return `Custom<{param.Key}>`
 	end,
 }
 
@@ -113,6 +117,9 @@ Parameter.Buffer = {
 		end
 		return b
 	end :: (any, Random) -> buffer,
+	tostring = function(param: BufferParameter, value: buffer): string
+		return `Buffer[{buffer.len(value)}]`
+	end,
 }
 
 type FloatParameter = {
@@ -193,6 +200,9 @@ Parameter.Vector2 = {
 		end
 		return value
 	end :: (any, Random) -> Vector2,
+	tostring = function(param: Vector2, value: Vector2): string
+		return `Vector2({value.X},{value.Y})`
+	end,
 }
 
 type Vector3Parameter = {
@@ -230,6 +240,9 @@ Parameter.Vector3 = {
 		end
 		return value
 	end :: (any, Random) -> Vector3,
+	tostring = function(param: Vector3, value: Vector3): string
+		return `Vector3({value.X},{value.Y},{value.Z})`
+	end,
 }
 
 type LiteralParameter = {
@@ -249,6 +262,9 @@ Parameter.Literal = {
 		local index = rng:NextInteger(1, #param.Values)
 		return param.Values[index]
 	end :: (any, Random) -> string,
+	tostring = function(param: LiteralParameter, value: string): string
+		return value
+	end,
 }
 
 type EnumItemParameter = {
@@ -268,6 +284,9 @@ Parameter.EnumItem = {
 		local index = rng:NextInteger(1, #param.Enum:GetEnumItems())
 		return param.Enum:GetEnumItems()[index]
 	end :: (any, Random) -> string,
+	tostring = function(param: EnumItemParameter, value: EnumItem): string
+		return `{value.EnumType}({value.Name})`
+	end,
 }
 
 type ArrayParameter = {
@@ -309,6 +328,9 @@ Parameter.Array = {
 		end
 		return result
 	end :: (any, Random) -> { any },
+	tostring = function(param: ArrayParameter, value: { any }): string
+		return `Array<{param.ValueType.Type}>[{#value}]`
+	end,
 }
 
 type StringParameter = {
@@ -352,6 +374,9 @@ Parameter.Color3 = {
 	generate = function(param: Color3Parameter, rng: Random): Color3
 		return Color3.fromRGB(rng:NextInteger(0, 255), rng:NextInteger(0, 255), rng:NextInteger(0, 255))
 	end :: (any, Random) -> string,
+	tostring = function(param: Color3Parameter, value: Color3): string
+		return `Color3({math.ceil(value.R * 255)},{math.ceil(value.G * 255)},{math.ceil(value.B * 255)})`
+	end,
 }
 type BrickColorParameter = {
 	read Key: string,
@@ -367,6 +392,9 @@ Parameter.BrickColor = {
 	generate = function(param: BrickColorParameter, rng: Random): BrickColor
 		return BrickColor.new(rng:NextNumber(), rng:NextNumber(), rng:NextNumber())
 	end :: (any, Random) -> string,
+	tostring = function(param: BrickColorParameter, value: BrickColor): string
+		return `BrickColor({value.Name})`
+	end,
 }
 type HexStringParameter = {
 	read Key: string,
@@ -382,6 +410,9 @@ Parameter.HexString = {
 	generate = function(param: HexStringParameter, rng: Random): string
 		return Color3.fromRGB(rng:NextInteger(0, 255), rng:NextInteger(0, 255), rng:NextInteger(0, 255)):ToHex()
 	end :: (any, Random) -> string,
+	tostring = function(param: HexStringParameter, value: string): string
+		return `HexString({value})`
+	end,
 }
 
 type MapParameter = {
@@ -432,6 +463,13 @@ Parameter.Map = {
 		end
 		return result
 	end :: (any, Random) -> { [any]: any },
+	tostring = function(param: MapParameter, map: { [any]: any }): string
+		local count = 0
+		for _ in pairs(map) do
+			count += 1
+		end
+		return `Map<{param.KeyType.Type},{param.ValueType.Type}>[{count}]`
+	end,
 }
 
 type NullableParameter = {
@@ -457,24 +495,39 @@ Parameter.Nullable = {
 			return Parameter.Any.generate(param.ValueType, rng)
 		end
 	end :: (any, Random) -> any?,
+	tostring = function(param: NullableParameter, value: any?): string
+		if value == nil then
+			return "nil"
+		else
+			return Parameter.Any.tostring(param.ValueType, value)
+		end
+	end,
 }
 
 type StaticParameter = {
 	read Key: string,
 	read Type: "Static",
 	read Value: any?,
+	read ToString: ((StaticParameter, value: any?) -> string)?,
 }
 Parameter.Static = {
-	new = function(key: string, value: any?): StaticParameter
+	new = function(key: string, value: any?, toString: ((StaticParameter, value: any?) -> string)?): StaticParameter
 		return {
 			Key = key,
 			Type = "Static",
 			Value = value,
+			ToString = toString,
 		}
 	end,
 	generate = function(param: StaticParameter, rng: Random): any?
 		return param.Value
 	end :: (any, Random) -> any?,
+	tostring = function(param: StaticParameter, value: any?): string
+		if param.ToString then
+			return param.ToString(param, value)
+		end
+		return tostring(value)
+	end,
 }
 
 -- not really something to mass generate due to mem limits
@@ -508,6 +561,9 @@ Parameter.EditableImage = {
 		assert(editableImage, `bad editable image`)
 		editableImage:Destroy()
 	end,
+	tostring = function(param: EditableImageParameter, value: EditableImage)
+		return `EditableImage[{value.Size.X}][{value.Size.Y}]`
+	end,
 }
 
 Parameter.Any = {}
@@ -533,5 +589,13 @@ Parameter.Any.generate = function(param: Parameter, rng: Random): any?
 	assert(solver ~= nil, `bad solver: "{param.Type}"`)
 	return solver.generate(param, rng)
 end :: (any, Random) -> any?
+Parameter.Any.tostring = function(param: Parameter, value: any): string
+	local solver = Parameter[param.Type]
+	assert(solver ~= nil, `bad solver: "{param.Type}"`)
+	if solver.tostring then
+		return solver.tostring(param, value)
+	end
+	return tostring(value)
+end
 
 return Parameter
