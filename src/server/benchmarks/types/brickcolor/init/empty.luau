@@ -14,6 +14,6 @@ return Benchmark.new(
 	function()
 		return BrickColor.new()
 	end :: any,
-	10_000,
+	100,
 	1_000
 )
