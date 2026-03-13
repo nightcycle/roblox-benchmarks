@@ -60,7 +60,8 @@ return function()
 	end
 	for i, runner in runners do
 		Logger.log(`\nrunning benchmark {i}/{#runners}`)
-		runner:save(runner:solve(Random.new()), ENV.IS_FLAT)
+		local solution = runner:solve(Random.new())
+		runner:save(solution, ENV.IS_FLAT)
 	end
 	Logger.log("benchmark run complete!\n")
 end

@@ -17,19 +17,21 @@ return Benchmark.new(
 			Benchmark.Parameter.Vector2.new("Position", Vector2.one, Vector2.one * CONSTANTS.MAX_EDITABLE_IMAGE_DIM),
 			Benchmark.Parameter.Vector2.new("Size", Vector2.one, Vector2.one * CONSTANTS.MAX_EDITABLE_IMAGE_DIM),
 		}, function(image: EditableImage, position: Vector2, size: Vector2)
-			local start = (position - size / 2):Floor()
-			local finish = (position + size / 2):Ceil()
-			start = Vector2.max(Vector2.min(image.Size - Vector2.one * 2, start), Vector2.one * 2):Ceil()
-			finish = Vector2.max(Vector2.min(image.Size - Vector2.one * 2, finish), Vector2.one * 2):Ceil()
-			if start == finish then
-				if start == image.Size - Vector2.one * 2 then
-					start -= Vector2.one * 2
-				else
-					start = Vector2.min(image.Size - Vector2.one * 2, finish + Vector2.one * 2)
-				end
-			end
-			size = finish - start
-			position = (size * 0.5 + start):Ceil()
+			local pA = position / CONSTANTS.MAX_EDITABLE_IMAGE_DIM
+			local sA = size / CONSTANTS.MAX_EDITABLE_IMAGE_DIM
+			position = (image.Size * pA):Ceil()
+			size = Vector2.min((image.Size * sA):Ceil(), image.Size - Vector2.one * 2)
+
+			local minX = math.clamp(math.round(position.X - size.X / 2), 1, image.Size.X)
+			local maxX = math.clamp(math.round(position.X + size.X / 2), 1, image.Size.X)
+			local minY = math.clamp(math.round(position.Y - size.Y / 2), 1, image.Size.Y)
+			local maxY = math.clamp(math.round(position.Y + size.Y / 2), 1, image.Size.Y)
+			local min = Vector2.new(minX, minY)
+			local max = Vector2.new(maxX, maxY)
+
+			position = min
+			size = max - min
+
 			return image, position, size
 		end),
 		Benchmark.Parameter.Color3.new("Color3"),
