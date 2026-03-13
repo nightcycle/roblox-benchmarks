@@ -174,7 +174,6 @@ These areas are considered high value due to how often developers engage with in
 
 v0.4:
 
-- improve coverage of tostring support across types, especially around including size metadata when it's not directly serializable.
 - create localized versions of `all.csv` for tests with matching parameters to be parsed together with the parameter columns included.
 
 v0.5:
