@@ -195,7 +195,6 @@ function FileUtil.read(path: string)
 		return HttpService:GetAsync(`{URL}?operation=read&path={path}`)
 	end)
 	if success then
-		-- print("res: ", response)
 		return fromB64(response)
 	else
 		error("Failed to read file: " .. tostring(response))

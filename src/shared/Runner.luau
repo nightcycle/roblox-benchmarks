@@ -126,43 +126,49 @@ function Runner.new(target: ModuleScript): Runner
 				local params = sampleParameters[sample]
 				data[sample] = run(table.unpack(params :: any, 1, #benchmark:flatten()))
 			end
+
+			local testStop = os.clock()
+			Logger.log(`\tsolve - finished {target:GetFullName()} in {testStop - testStart}s`)
+
+			Logger.log(`\tserializing results`)
+			local csvStr: string = ""
+			do
+				local rows = {}
+				local headers = { "runner.index.n", "runner.baseline.ps", "elapsed.ps", "repeats.n" }
+				for i, param in benchmark:flatten() do
+					table.insert(headers, ("param." .. param.Key .. "." .. param.Type):lower())
+				end
+				table.insert(rows, table.concat(headers, ","))
+				for j = 1, benchmark.Samples do
+					local sampleData = data[j]
+					local row: { string } = {
+						tostring(ENV.RUNNER_INDEX),
+						tostring(sampleData.Baseline),
+						tostring(sampleData.Elapsed),
+						tostring(benchmark.Repeats),
+					}
+					for i, param in benchmark:flatten() do
+						local paramValue = sampleData.Inputs[i]
+						local str = Benchmark.Parameter.Any.tostring(param, paramValue):gsub(",", ";") -- escape commas
+						table.insert(row, str)
+					end
+					table.insert(rows, table.concat(row, ","))
+				end
+				csvStr = table.concat(rows, "\n")
+			end
 			Logger.log(`\tclean - cleaning up cached params`)
 			for i, param in benchmark:flatten() do
 				Benchmark.Parameter.Any.clean(param)
 			end
-			Logger.log(`\tsolve - summarizing {target:GetFullName()}`)
-			do
-				local testStop = os.clock()
-				Logger.log(`\tsolve - finished {target:GetFullName()} in {testStop - testStart}s`)
-				return {
-					Benchmark = benchmark,
-					Data = data,
-					exportToCSV = function(self: Overview): string
-						local rows = {}
-						local headers = { "runner.index.n", "runner.baseline.ps", "elapsed.ps", "repeats.n" }
-						for i, param in self.Benchmark:flatten() do
-							table.insert(headers, ("param." .. param.Key .. "." .. param.Type):lower())
-						end
-						table.insert(rows, table.concat(headers, ","))
-						for j = 1, self.Benchmark.Samples do
-							local data = self.Data[j]
-							local row: { string } = {
-								tostring(ENV.RUNNER_INDEX),
-								tostring(data.Baseline),
-								tostring(data.Elapsed),
-								tostring(self.Benchmark.Repeats),
-							}
-							for i, param in self.Benchmark:flatten() do
-								local paramValue = data.Inputs[i]
-								local str = Benchmark.Parameter.Any.tostring(param, paramValue):gsub(",", ";") -- escape commas
-								table.insert(row, str)
-							end
-							table.insert(rows, table.concat(row, ","))
-						end
-						return table.concat(rows, "\n")
-					end,
-				}
-			end
+
+			local out = {
+				Benchmark = benchmark,
+				Data = data,
+				exportToCSV = function(self: Overview): string
+					return csvStr
+				end,
+			}
+			return out
 		end,
 		save = function(self: Runner, overview: Overview, isFlat: boolean): ()
 			-- no-op

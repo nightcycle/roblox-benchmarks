@@ -592,7 +592,7 @@ Parameter.EditableImage = {
 		end
 	end,
 	tostring = function(param: EditableImageParameter, value: EditableImage)
-		return `EditableImage[{math.round(value.Size.X)}][{math.round(value.Size.Y)}]`
+		return `EditableImage[{value.Size.X}][{value.Size.Y}]`
 	end,
 }
 
