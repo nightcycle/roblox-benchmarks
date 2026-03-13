@@ -31,6 +31,7 @@ export type Parameter =
 	| CustomParameter
 	| EditableImageParameter
 	| EnumItemParameter
+	| TupleParameter
 
 type CustomParameter = {
 	read Key: string,
@@ -479,9 +480,9 @@ type NullableParameter = {
 	read ValueType: Parameter,
 }
 Parameter.Nullable = {
-	new = function(key: string, valueType: Parameter, chanceNull: number?): NullableParameter
+	new = function(valueType: Parameter, chanceNull: number?): NullableParameter
 		return {
-			Key = key,
+			Key = valueType.Key,
 			Type = "Nullable",
 			ChanceNull = chanceNull,
 			ValueType = valueType,
@@ -592,6 +593,53 @@ Parameter.EditableImage = {
 	end,
 	tostring = function(param: EditableImageParameter, value: EditableImage)
 		return `EditableImage[{math.round(value.Size.X)}][{math.round(value.Size.Y)}]`
+	end,
+}
+
+type TupleParameter = {
+	read Key: string,
+	read Type: "Tuple",
+	read ValueTypes: { Parameter },
+	read Processor: (...any) -> ...any,
+}
+Parameter.Tuple = {
+	new = function(valueTypes: { Parameter }, processor: (...any) -> ...any): TupleParameter
+		return {
+			Key = "Tuple",
+			Type = "Tuple",
+			ValueTypes = valueTypes,
+			Processor = processor,
+		}
+	end,
+	generate = function(param: TupleParameter, rng: Random): ...any
+		local function flattenParameters(params: { Parameter }): { Parameter }
+			local unpackedParams: { any } = {}
+			for _, param in params do
+				if param.Type == "Tuple" then
+					local tupleValues = flattenParameters(param.ValueTypes)
+					for i = 1, #tupleValues do
+						table.insert(unpackedParams, tupleValues[i])
+					end
+				else
+					table.insert(unpackedParams, param)
+				end
+			end
+			return unpackedParams
+		end
+
+		local generatedValues = {}
+		local flatValueTypes = flattenParameters(param.ValueTypes)
+		for i, valueType in ipairs(flatValueTypes) do
+			generatedValues[i] = Parameter.Any.generate(valueType, rng)
+		end
+		return param.Processor(table.unpack(generatedValues, 1, #flatValueTypes))
+	end :: (any, Random) -> { any },
+	tostring = function(param: TupleParameter, values: { any }): string
+		local valueStrings = {}
+		for i, value in ipairs(values) do
+			valueStrings[i] = Parameter.Any.tostring(param.ValueTypes[i], value)
+		end
+		return `Tuple({table.concat(valueStrings, ",")})`
 	end,
 }
 
