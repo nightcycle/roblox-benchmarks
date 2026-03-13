@@ -531,38 +531,67 @@ Parameter.Static = {
 }
 
 -- not really something to mass generate due to mem limits
+type EditableImageSizePreset = "64x64" | "128x128" | "256x256" | "512x512" | "1024x1024" | "2048x2048"
+local SIZE_TO_PRESET: { { Value: number, Preset: EditableImageSizePreset } } = {
+	{ Value = 64, Preset = "64x64" },
+	{ Value = 128, Preset = "128x128" },
+	{ Value = 256, Preset = "256x256" },
+	{ Value = 512, Preset = "512x512" },
+	{ Value = 1024, Preset = "1024x1024" },
+	{ Value = 2048, Preset = "2048x2048" },
+}
 type EditableImageParameter = {
 	read Key: string,
 	read Type: "EditableImage",
-	read Size: Vector2,
-	[typeof(HYDRATION_CACHE_KEY)]: EditableImage?,
+	read MinDim: number,
+	read MaxDim: number,
+	[typeof(HYDRATION_CACHE_KEY)]: { [EditableImageSizePreset]: EditableImage },
 }
 Parameter.EditableImage = {
-	new = function(key: string, size: Vector2?): EditableImageParameter
+	new = function(key: string, minDim: number?, maxDim: number?): EditableImageParameter
 		return {
 			Key = key,
 			Type = "EditableImage" :: "EditableImage",
-			Size = size or Vector2.one * 512,
+			MinDim = math.max(minDim or 1, 1),
+			MaxDim = math.min(maxDim or 2048, 2048),
 		}
 	end,
 	hydrate = function(param: EditableImageParameter)
 		assert(param[HYDRATION_CACHE_KEY] == nil, `param "{param.Key}" already hydrated`)
-		param[HYDRATION_CACHE_KEY] = AssetService:CreateEditableImage({
-			Size = param.Size,
-		})
+		local hydrationCache = {}
+		for i, sizePreset in ipairs(SIZE_TO_PRESET) do
+			if param.MinDim <= sizePreset.Value and param.MaxDim >= sizePreset.Value then
+				hydrationCache[sizePreset.Preset] = AssetService:CreateEditableImage({
+					Size = Vector2.new(sizePreset.Value, sizePreset.Value),
+				})
+			end
+		end
+		param[HYDRATION_CACHE_KEY] = hydrationCache
 	end,
 	generate = function(param: EditableImageParameter, rng: Random)
 		assert(param[HYDRATION_CACHE_KEY], `param "{param.Key}" not hydrated`)
-		return param[HYDRATION_CACHE_KEY]
+		local x = rng:NextInteger(param.MinDim, param.MaxDim)
+		local viableSizes = {}
+		for _, sizePreset in ipairs(SIZE_TO_PRESET) do
+			if sizePreset.Value >= x then
+				table.insert(viableSizes, sizePreset.Preset)
+			end
+		end
+		local chosenPreset = viableSizes[rng:NextInteger(1, #viableSizes)]
+		local image = param[HYDRATION_CACHE_KEY][chosenPreset]
+		assert(image, `no chosen preset at: "{chosenPreset}"`)
+		return image
 	end :: (any, Random) -> EditableImage,
 	clean = function(param: EditableImageParameter)
-		local editableImage = param[HYDRATION_CACHE_KEY]
+		local editableImages = param[HYDRATION_CACHE_KEY]
 		param[HYDRATION_CACHE_KEY] = nil
-		assert(editableImage, `bad editable image`)
-		editableImage:Destroy()
+		assert(editableImages, `bad editable image`)
+		for _, editableImage in pairs(editableImages) do
+			editableImage:Destroy()
+		end
 	end,
 	tostring = function(param: EditableImageParameter, value: EditableImage)
-		return `EditableImage[{value.Size.X}][{value.Size.Y}]`
+		return `EditableImage[{math.round(value.Size.X)}][{math.round(value.Size.Y)}]`
 	end,
 }
 
