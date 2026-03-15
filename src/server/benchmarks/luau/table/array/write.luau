@@ -5,7 +5,7 @@
 local Benchmark = require(game.ReplicatedStorage.Shared.Benchmark)
 -- Types
 -- Constants
-local SIZE = 10
+local SIZE = 10_000
 local VALUE_PARAM = Benchmark.Parameter.Integer.new("value")
 -- Variables
 -- References
