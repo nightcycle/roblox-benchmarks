@@ -12,7 +12,7 @@ local SIZE = 10_000
 -- Class
 return Benchmark.new(
 	{
-		Benchmark.Parameter.Array.new("array", Benchmark.Parameter.Integer.new("value"), true, SIZE, SIZE),
+		Benchmark.Parameter.Array.new("array", Benchmark.Parameter.Integer.new("value"), true),
 		Benchmark.Parameter.Integer.new("index", 1, SIZE),
 	},
 	function(array: { number }, index: number)

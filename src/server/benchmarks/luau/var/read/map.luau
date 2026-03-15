@@ -15,6 +15,7 @@ return Benchmark.new(
 			"array",
 			Benchmark.Parameter.Literal.new("key", {"1", "2", "3"}),
 			Benchmark.Parameter.Integer.new("value"),
+			nil,
 			3,
 			3
 		),

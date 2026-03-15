@@ -14,9 +14,10 @@ return Benchmark.new(
 		Benchmark.Parameter.Array.new("array", Benchmark.Parameter.Integer.new("value"), true, 1, 1),
 	},
 	function(array: { number })
-		local a
-		while not a do
-			a = array[1]
+		local i = 1
+		while i <= #array do
+			local _ = array[i]
+			i += 1
 		end
 		return nil
 	end :: any,

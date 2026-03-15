@@ -330,7 +330,11 @@ Parameter.Array = {
 		return result
 	end :: (any, Random) -> { any },
 	tostring = function(param: ArrayParameter, value: { any }): string
-		return `Array<{param.ValueType.Type}>[{#value}]`
+		if table.isfrozen(value) then
+			return `FrozenArray<{param.ValueType.Type}>[{#value}]`
+		else
+			return `Array<{param.ValueType.Type}>[{#value}]`
+		end
 	end,
 }
 
@@ -423,12 +427,14 @@ type MapParameter = {
 	read KeyType: Parameter,
 	read MinLength: number?,
 	read MaxLength: number?,
+	read IsFrozen: boolean?,
 }
 Parameter.Map = {
 	new = function(
 		key: string,
 		keyType: Parameter,
 		valueType: Parameter,
+		isFrozen: boolean?,
 		minLength: number?,
 		maxLength: number?
 	): MapParameter
@@ -439,6 +445,7 @@ Parameter.Map = {
 			KeyType = keyType,
 			MinLength = minLength,
 			MaxLength = maxLength,
+			IsFrozen = isFrozen,
 		}
 	end,
 	generate = function(param: MapParameter, rng: Random): { [any]: any }
@@ -462,6 +469,11 @@ Parameter.Map = {
 			local value = Parameter.Any.generate(param.ValueType, rng)
 			result[key] = value
 		end
+		if param.IsFrozen == true then
+			table.freeze(result)
+		elseif param.IsFrozen == nil and rng:NextNumber() < 0.5 then
+			table.freeze(result)
+		end
 		return result
 	end :: (any, Random) -> { [any]: any },
 	tostring = function(param: MapParameter, map: { [any]: any }): string
@@ -469,7 +481,11 @@ Parameter.Map = {
 		for _ in pairs(map) do
 			count += 1
 		end
-		return `Map<{param.KeyType.Type},{param.ValueType.Type}>[{count}]`
+		if table.isfrozen(map) then
+			return `ForzenMap<{param.KeyType.Type},{param.ValueType.Type}>[{count}]`
+		else
+			return `Map<{param.KeyType.Type},{param.ValueType.Type}>[{count}]`
+		end
 	end,
 }
 
