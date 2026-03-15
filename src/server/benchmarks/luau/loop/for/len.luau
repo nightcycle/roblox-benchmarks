@@ -19,6 +19,6 @@ return Benchmark.new(
 		end
 		return nil
 	end :: any,
-	250_000,
+	1_000,
 	100
 )
