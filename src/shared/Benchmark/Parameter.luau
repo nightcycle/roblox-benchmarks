@@ -31,15 +31,20 @@ export type Parameter =
 	| CustomParameter
 	| EditableImageParameter
 	| EnumItemParameter
+	| TupleParameter
 
 type CustomParameter = {
 	read Key: string,
 	read Type: "Custom",
 	read Method: (Random) -> any?,
-	read ToString: ((CustomParameter) -> string)?,
+	read ToString: ((CustomParameter, value: any) -> string)?,
 }
 Parameter.Custom = {
-	new = function(key: string, method: (Random) -> any?, toString: ((CustomParameter) -> string)?): CustomParameter
+	new = function(
+		key: string,
+		method: (Random) -> any?,
+		toString: ((CustomParameter, value: any) -> string)?
+	): CustomParameter
 		return {
 			Key = key,
 			Type = "Custom",
@@ -50,11 +55,11 @@ Parameter.Custom = {
 	generate = function(param: CustomParameter, rng: Random): any?
 		return param.Method(rng)
 	end :: (any, Random) -> any?,
-	tostring = function(param: CustomParameter): string
+	tostring = function(param: CustomParameter, value: any): string
 		if param.ToString then
-			return param.ToString(param)
+			return param.ToString(param, value)
 		end
-		return string.format("Custom<%s>", param.Key)
+		return `Custom<{param.Key}>`
 	end,
 }
 
@@ -113,6 +118,9 @@ Parameter.Buffer = {
 		end
 		return b
 	end :: (any, Random) -> buffer,
+	tostring = function(param: BufferParameter, value: buffer): string
+		return `Buffer[{buffer.len(value)}]`
+	end,
 }
 
 type FloatParameter = {
@@ -193,6 +201,9 @@ Parameter.Vector2 = {
 		end
 		return value
 	end :: (any, Random) -> Vector2,
+	tostring = function(param: Vector2, value: Vector2): string
+		return `Vector2({value.X},{value.Y})`
+	end,
 }
 
 type Vector3Parameter = {
@@ -230,6 +241,9 @@ Parameter.Vector3 = {
 		end
 		return value
 	end :: (any, Random) -> Vector3,
+	tostring = function(param: Vector3, value: Vector3): string
+		return `Vector3({value.X},{value.Y},{value.Z})`
+	end,
 }
 
 type LiteralParameter = {
@@ -249,6 +263,9 @@ Parameter.Literal = {
 		local index = rng:NextInteger(1, #param.Values)
 		return param.Values[index]
 	end :: (any, Random) -> string,
+	tostring = function(param: LiteralParameter, value: string): string
+		return value
+	end,
 }
 
 type EnumItemParameter = {
@@ -268,6 +285,9 @@ Parameter.EnumItem = {
 		local index = rng:NextInteger(1, #param.Enum:GetEnumItems())
 		return param.Enum:GetEnumItems()[index]
 	end :: (any, Random) -> string,
+	tostring = function(param: EnumItemParameter, value: EnumItem): string
+		return `{value.EnumType}({value.Name})`
+	end,
 }
 
 type ArrayParameter = {
@@ -309,6 +329,13 @@ Parameter.Array = {
 		end
 		return result
 	end :: (any, Random) -> { any },
+	tostring = function(param: ArrayParameter, value: { any }): string
+		if table.isfrozen(value) then
+			return `FrozenArray<{param.ValueType.Type}>[{#value}]`
+		else
+			return `Array<{param.ValueType.Type}>[{#value}]`
+		end
+	end,
 }
 
 type StringParameter = {
@@ -352,6 +379,9 @@ Parameter.Color3 = {
 	generate = function(param: Color3Parameter, rng: Random): Color3
 		return Color3.fromRGB(rng:NextInteger(0, 255), rng:NextInteger(0, 255), rng:NextInteger(0, 255))
 	end :: (any, Random) -> string,
+	tostring = function(param: Color3Parameter, value: Color3): string
+		return `Color3({math.ceil(value.R * 255)},{math.ceil(value.G * 255)},{math.ceil(value.B * 255)})`
+	end,
 }
 type BrickColorParameter = {
 	read Key: string,
@@ -367,6 +397,9 @@ Parameter.BrickColor = {
 	generate = function(param: BrickColorParameter, rng: Random): BrickColor
 		return BrickColor.new(rng:NextNumber(), rng:NextNumber(), rng:NextNumber())
 	end :: (any, Random) -> string,
+	tostring = function(param: BrickColorParameter, value: BrickColor): string
+		return `BrickColor({value.Name})`
+	end,
 }
 type HexStringParameter = {
 	read Key: string,
@@ -382,6 +415,9 @@ Parameter.HexString = {
 	generate = function(param: HexStringParameter, rng: Random): string
 		return Color3.fromRGB(rng:NextInteger(0, 255), rng:NextInteger(0, 255), rng:NextInteger(0, 255)):ToHex()
 	end :: (any, Random) -> string,
+	tostring = function(param: HexStringParameter, value: string): string
+		return `HexString({value})`
+	end,
 }
 
 type MapParameter = {
@@ -391,12 +427,14 @@ type MapParameter = {
 	read KeyType: Parameter,
 	read MinLength: number?,
 	read MaxLength: number?,
+	read IsFrozen: boolean?,
 }
 Parameter.Map = {
 	new = function(
 		key: string,
 		keyType: Parameter,
 		valueType: Parameter,
+		isFrozen: boolean?,
 		minLength: number?,
 		maxLength: number?
 	): MapParameter
@@ -407,6 +445,7 @@ Parameter.Map = {
 			KeyType = keyType,
 			MinLength = minLength,
 			MaxLength = maxLength,
+			IsFrozen = isFrozen,
 		}
 	end,
 	generate = function(param: MapParameter, rng: Random): { [any]: any }
@@ -430,8 +469,24 @@ Parameter.Map = {
 			local value = Parameter.Any.generate(param.ValueType, rng)
 			result[key] = value
 		end
+		if param.IsFrozen == true then
+			table.freeze(result)
+		elseif param.IsFrozen == nil and rng:NextNumber() < 0.5 then
+			table.freeze(result)
+		end
 		return result
 	end :: (any, Random) -> { [any]: any },
+	tostring = function(param: MapParameter, map: { [any]: any }): string
+		local count = 0
+		for _ in pairs(map) do
+			count += 1
+		end
+		if table.isfrozen(map) then
+			return `ForzenMap<{param.KeyType.Type},{param.ValueType.Type}>[{count}]`
+		else
+			return `Map<{param.KeyType.Type},{param.ValueType.Type}>[{count}]`
+		end
+	end,
 }
 
 type NullableParameter = {
@@ -441,9 +496,9 @@ type NullableParameter = {
 	read ValueType: Parameter,
 }
 Parameter.Nullable = {
-	new = function(key: string, valueType: Parameter, chanceNull: number?): NullableParameter
+	new = function(valueType: Parameter, chanceNull: number?): NullableParameter
 		return {
-			Key = key,
+			Key = valueType.Key,
 			Type = "Nullable",
 			ChanceNull = chanceNull,
 			ValueType = valueType,
@@ -457,56 +512,150 @@ Parameter.Nullable = {
 			return Parameter.Any.generate(param.ValueType, rng)
 		end
 	end :: (any, Random) -> any?,
+	tostring = function(param: NullableParameter, value: any?): string
+		if value == nil then
+			return "nil"
+		else
+			return Parameter.Any.tostring(param.ValueType, value)
+		end
+	end,
 }
 
 type StaticParameter = {
 	read Key: string,
 	read Type: "Static",
 	read Value: any?,
+	read ToString: ((StaticParameter, value: any?) -> string)?,
 }
 Parameter.Static = {
-	new = function(key: string, value: any?): StaticParameter
+	new = function(key: string, value: any?, toString: ((StaticParameter, value: any?) -> string)?): StaticParameter
 		return {
 			Key = key,
 			Type = "Static",
 			Value = value,
+			ToString = toString,
 		}
 	end,
 	generate = function(param: StaticParameter, rng: Random): any?
 		return param.Value
 	end :: (any, Random) -> any?,
+	tostring = function(param: StaticParameter, value: any?): string
+		if param.ToString then
+			return param.ToString(param, value)
+		end
+		return tostring(value)
+	end,
 }
 
 -- not really something to mass generate due to mem limits
+type EditableImageSizePreset = "64x64" | "128x128" | "256x256" | "512x512" | "1024x1024" | "2048x2048"
+local SIZE_TO_PRESET: { { Value: number, Preset: EditableImageSizePreset } } = {
+	{ Value = 64, Preset = "64x64" },
+	{ Value = 128, Preset = "128x128" },
+	{ Value = 256, Preset = "256x256" },
+	{ Value = 512, Preset = "512x512" },
+	{ Value = 1024, Preset = "1024x1024" },
+	{ Value = 2048, Preset = "2048x2048" },
+}
 type EditableImageParameter = {
 	read Key: string,
 	read Type: "EditableImage",
-	read Size: Vector2,
-	[typeof(HYDRATION_CACHE_KEY)]: EditableImage?,
+	read MinDim: number,
+	read MaxDim: number,
+	[typeof(HYDRATION_CACHE_KEY)]: { [EditableImageSizePreset]: EditableImage },
 }
 Parameter.EditableImage = {
-	new = function(key: string, size: Vector2?): EditableImageParameter
+	new = function(key: string, minDim: number?, maxDim: number?): EditableImageParameter
 		return {
 			Key = key,
 			Type = "EditableImage" :: "EditableImage",
-			Size = size or Vector2.one * 512,
+			MinDim = math.max(minDim or 1, 1),
+			MaxDim = math.min(maxDim or 2048, 2048),
 		}
 	end,
 	hydrate = function(param: EditableImageParameter)
 		assert(param[HYDRATION_CACHE_KEY] == nil, `param "{param.Key}" already hydrated`)
-		param[HYDRATION_CACHE_KEY] = AssetService:CreateEditableImage({
-			Size = param.Size,
-		})
+		local hydrationCache = {}
+		for i, sizePreset in ipairs(SIZE_TO_PRESET) do
+			if param.MinDim <= sizePreset.Value and param.MaxDim >= sizePreset.Value then
+				hydrationCache[sizePreset.Preset] = AssetService:CreateEditableImage({
+					Size = Vector2.new(sizePreset.Value, sizePreset.Value),
+				})
+			end
+		end
+		param[HYDRATION_CACHE_KEY] = hydrationCache
 	end,
 	generate = function(param: EditableImageParameter, rng: Random)
 		assert(param[HYDRATION_CACHE_KEY], `param "{param.Key}" not hydrated`)
-		return param[HYDRATION_CACHE_KEY]
+		local x = rng:NextInteger(param.MinDim, param.MaxDim)
+		local viableSizes = {}
+		for _, sizePreset in ipairs(SIZE_TO_PRESET) do
+			if sizePreset.Value >= x then
+				table.insert(viableSizes, sizePreset.Preset)
+			end
+		end
+		local chosenPreset = viableSizes[rng:NextInteger(1, #viableSizes)]
+		local image = param[HYDRATION_CACHE_KEY][chosenPreset]
+		assert(image, `no chosen preset at: "{chosenPreset}"`)
+		return image
 	end :: (any, Random) -> EditableImage,
 	clean = function(param: EditableImageParameter)
-		local editableImage = param[HYDRATION_CACHE_KEY]
+		local editableImages = param[HYDRATION_CACHE_KEY]
 		param[HYDRATION_CACHE_KEY] = nil
-		assert(editableImage, `bad editable image`)
-		editableImage:Destroy()
+		assert(editableImages, `bad editable image`)
+		for _, editableImage in pairs(editableImages) do
+			editableImage:Destroy()
+		end
+	end,
+	tostring = function(param: EditableImageParameter, value: EditableImage)
+		return `EditableImage[{value.Size.X}][{value.Size.Y}]`
+	end,
+}
+
+type TupleParameter = {
+	read Key: string,
+	read Type: "Tuple",
+	read ValueTypes: { Parameter },
+	read Processor: (...any) -> ...any,
+}
+Parameter.Tuple = {
+	new = function(valueTypes: { Parameter }, processor: (...any) -> ...any): TupleParameter
+		return {
+			Key = "Tuple",
+			Type = "Tuple",
+			ValueTypes = valueTypes,
+			Processor = processor,
+		}
+	end,
+	generate = function(param: TupleParameter, rng: Random): ...any
+		local function flattenParameters(params: { Parameter }): { Parameter }
+			local unpackedParams: { any } = {}
+			for _, param in params do
+				if param.Type == "Tuple" then
+					local tupleValues = flattenParameters(param.ValueTypes)
+					for i = 1, #tupleValues do
+						table.insert(unpackedParams, tupleValues[i])
+					end
+				else
+					table.insert(unpackedParams, param)
+				end
+			end
+			return unpackedParams
+		end
+
+		local generatedValues = {}
+		local flatValueTypes = flattenParameters(param.ValueTypes)
+		for i, valueType in ipairs(flatValueTypes) do
+			generatedValues[i] = Parameter.Any.generate(valueType, rng)
+		end
+		return param.Processor(table.unpack(generatedValues, 1, #flatValueTypes))
+	end :: (any, Random) -> { any },
+	tostring = function(param: TupleParameter, values: { any }): string
+		local valueStrings = {}
+		for i, value in ipairs(values) do
+			valueStrings[i] = Parameter.Any.tostring(param.ValueTypes[i], value)
+		end
+		return `Tuple({table.concat(valueStrings, ",")})`
 	end,
 }
 
@@ -533,5 +682,13 @@ Parameter.Any.generate = function(param: Parameter, rng: Random): any?
 	assert(solver ~= nil, `bad solver: "{param.Type}"`)
 	return solver.generate(param, rng)
 end :: (any, Random) -> any?
+Parameter.Any.tostring = function(param: Parameter, value: any): string
+	local solver = Parameter[param.Type]
+	assert(solver ~= nil, `bad solver: "{param.Type}"`)
+	if solver.tostring then
+		return solver.tostring(param, value)
+	end
+	return tostring(value)
+end
 
 return Parameter

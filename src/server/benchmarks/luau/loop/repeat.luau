@@ -11,15 +11,16 @@ local Benchmark = require(game.ReplicatedStorage.Shared.Benchmark)
 -- Class
 return Benchmark.new(
 	{
-		Benchmark.Parameter.Array.new("array", Benchmark.Parameter.Integer.new("value"), true, 1, 1),
+		Benchmark.Parameter.Array.new("array", Benchmark.Parameter.Integer.new("value")),
 	},
 	function(array: { number })
-		local a
+		local i = 1
 		repeat
-			a = array[1]
-		until a
+			local _ = array[i]
+			i += 1
+		until i > #array
 		return nil
 	end :: any,
-	250_000,
+	1_000,
 	100
 )

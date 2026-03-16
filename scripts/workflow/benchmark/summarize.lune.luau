@@ -7,6 +7,7 @@ assert(DATA_DIR, `bad arg1 / DATA_DIR`)
 local OUT_PATH = DATA_DIR .. "/summary.csv"
 local ALL_PATH = DATA_DIR .. "/all.csv"
 type CSV = {
+	headerCount: number,
 	headers: { [string]: number },
 	rows: { { [string]: string } },
 }
@@ -24,6 +25,10 @@ function parseCSV(path: string): CSV
 	local content = fs.readFile(path):gsub("\r", "")
 	local lines = content:split("\n")
 	local headerList = parseHeader(lines[1])
+	local headerCount = 0
+	for _ in headerList do
+		headerCount += 1
+	end
 	table.remove(lines, 1)
 	local rows = {}
 	for i, line in ipairs(lines) do
@@ -38,6 +43,7 @@ function parseCSV(path: string): CSV
 		table.insert(rows, row)
 	end
 	return {
+		headerCount = headerCount,
 		headers = headerList,
 		rows = rows,
 	}
@@ -65,9 +71,18 @@ type DataRow = {
 	["runner.baseline.ps"]: number,
 	["elapsed.ps"]: number,
 	["repeats.n"]: number,
+	params: {
+		[string]: string,
+	},
 }
 function unpackData(csv: CSV): { DataRow }
 	local out = {}
+	local paramHeaders = {}
+	for k, i in csv.headers do
+		if k:find("param") then
+			paramHeaders[k] = true
+		end
+	end
 	for _, row in ipairs(csv.rows) do
 		local runnerIndex = tonumber(row["runner.index.n"] or row["runner.index"])
 		assert(runnerIndex, `bad runnerIndex`)
@@ -86,7 +101,11 @@ function unpackData(csv: CSV): { DataRow }
 			["runner.baseline.ps"] = baseline,
 			["elapsed.ps"] = elapsed,
 			["repeats.n"] = repeats,
+			params = {},
 		}
+		for k, _ in paramHeaders do
+			dataRow.params[k] = row[k]
+		end
 		table.insert(out, dataRow)
 	end
 	return out
@@ -123,7 +142,6 @@ function normalizeRawElapsed(rawElapsed: number, baseline: number, avgBaseline: 
 	local relativeSpeed = baseline / avgBaseline
 	return math.ceil((rawElapsed - baseline) / relativeSpeed)
 end
-
 type StatInfo = {
 	count: number,
 	mean: number,
@@ -141,36 +159,40 @@ type StatInfo = {
 
 do
 	local currentRunnerId = 0
+	local summaryCSVHeaderList = {
+		"bench.path",
+		"bench.runs",
+		"bench.samples",
+		"bench.repeats",
+		"stats.mean",
+		"stats.stddev",
+		"stats.p10",
+		"stats.p50",
+		"stats.p90",
+		"stats.p99",
+		"stats.min",
+		"stats.max",
+		"stats.median",
+		"stats.q1",
+		"stats.q3",
+	}
 	local summaryCSV: CSV = {
-		headers = parseHeader(table.concat({
-			"bench.path",
-			"bench.runs",
-			"bench.samples",
-			"bench.repeats",
-			"stats.mean",
-			"stats.stddev",
-			"stats.p10",
-			"stats.p50",
-			"stats.p90",
-			"stats.p99",
-			"stats.min",
-			"stats.max",
-			"stats.median",
-			"stats.q1",
-			"stats.q3",
-		}, ",")),
+		headerCount = 0,
+		headers = parseHeader(table.concat(summaryCSVHeaderList, ",")),
 		rows = {},
 	}
+	local allCSVHeaderList = {
+		"bench.path",
+		"bench.repeats.n",
+		"bench.baseline.ps",
+		"runner.id",
+		"runner.baseline.ps",
+		"elapsed.raw.ps",
+		"elapsed.μs",
+	}
 	local allCSV: CSV = {
-		headers = parseHeader(table.concat({
-			"bench.path",
-			"bench.repeats.n",
-			"bench.baseline.ps",
-			"runner.id",
-			"runner.baseline.ps",
-			"elapsed.raw.ps",
-			"elapsed.clean.ps",
-		}, ",")),
+		headerCount = #allCSVHeaderList,
+		headers = parseHeader(table.concat(allCSVHeaderList, ",")),
 		rows = {},
 	}
 	local function summarize(data: { number }): StatInfo
@@ -258,20 +280,26 @@ do
 			currentRunnerId += 1
 			for _, dataRow in ipairs(dataSet) do
 				if dataRow["runner.index.n"] == i then
-					table.insert(
-						allCSV.rows,
-						{
-							["bench.path"] = benchPath,
-							["bench.repeats.n"] = tostring(dataRow["repeats.n"]),
-							["bench.baseline.ps"] = tostring(math.ceil(avgBaseline)),
-							["runner.id"] = tostring(currentRunnerId),
-							["runner.baseline.ps"] = tostring(dataRow["runner.baseline.ps"]),
-							["elapsed.raw.ps"] = tostring(dataRow["elapsed.ps"]),
-							["elapsed.clean.ps"] = tostring(
-								normalizeRawElapsed(dataRow["elapsed.ps"], dataRow["runner.baseline.ps"], avgBaseline)
-							),
-						} :: { [string]: string }
-					)
+					local allCSVRow = {
+						["bench.path"] = benchPath,
+						["bench.repeats.n"] = tostring(dataRow["repeats.n"]),
+						["bench.baseline.ps"] = tostring(math.ceil(avgBaseline)),
+						["runner.id"] = tostring(currentRunnerId),
+						["runner.baseline.ps"] = tostring(dataRow["runner.baseline.ps"]),
+						["elapsed.raw.ps"] = tostring(dataRow["elapsed.ps"]),
+						["elapsed.μs"] = tostring(
+							normalizeRawElapsed(dataRow["elapsed.ps"], dataRow["runner.baseline.ps"], avgBaseline)
+								/ 1000
+						),
+					} :: { [string]: string }
+					for k, v in pairs(dataRow.params) do
+						if not allCSV.headers[k] then
+							allCSV.headerCount += 1
+							allCSV.headers[k] = allCSV.headerCount
+						end
+						allCSVRow[k] = v
+					end
+					table.insert(allCSV.rows, allCSVRow)
 				end
 			end
 		end
