@@ -289,7 +289,7 @@ do
 						["elapsed.raw.ps"] = tostring(dataRow["elapsed.ps"]),
 						["elapsed.μs"] = tostring(
 							normalizeRawElapsed(dataRow["elapsed.ps"], dataRow["runner.baseline.ps"], avgBaseline)
-								/ 1000
+								/ (1000 * 1000)
 						),
 					} :: { [string]: string }
 					for k, v in pairs(dataRow.params) do
